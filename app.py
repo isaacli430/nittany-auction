@@ -13,40 +13,87 @@ def load_db():
     sql.connect("database.db")
     connection.cursor()
 
+    # ================================
+    # User Info
+    # ================================
     cursor.execute("""
     CREATE TABLE IF NOT EXISTS Users(
     email TEXT,
-    password TEXT,
+    password TEXT NOT NULL,
+
     PRIMARY KEY (email));
     """)
 
-    cursor.execute("""
-    CREATE TABLE IF NOT EXISTS Sellers(
-    email TEXT,
-    bank_routing_number TEXT,
-    bank_account_number INTEGER,
-    balance REAL,
-    PRIMARY KEY (email)
-    FOREIGN KEY (email) REFERENCES Users ON DELETE CASCADE);
-    """)
 
+    # ================================
+    # Location Info
+    # ================================
     cursor.excute("""
     CREATE TABLE IF NOT EXISTS Zipcode_Info (
     zipcode INTEGER,
-    city TEXT,
-    state TEXT,
+    city TEXT NOT NULL,
+    state TEXT NOT NULL,
+
     PRIMARY KEY (zipcode));
     """)
 
     cursor.execute("""
     CREATE TABLE IF NOT EXISTS Address (
-    address_id INTEGER,
-    zipcode INTEGER,
-    street_num INTEGER,
-    street_name TEXT,
-    PRIMARY KEY (address_id)
+    address_id TEXT,
+    zipcode INTEGER NOT NULL,
+    street_num INTEGER NOT NULL,
+    street_name TEXT NOT NULL,
+
+    PRIMARY KEY (address_id),
     FOREIGN KEY (zipcode) REFERENCES Zipcode_Info);
     """)
+
+
+    # ================================
+    # Bidder Info
+    # ================================
+    cursor.execute("""
+    CREATE TABLE IF NOT EXISTS Bidders (
+    email TEXT,
+    first_name TEXT NOT NULL,
+    last_name TEXT NOT NULL,
+    age INTEGER NOT NULL,
+    home_address_id TEXT NOT NULL,
+    major TEXT NOT NULL,
+
+    PRIMARY KEY (email),
+    FOREIGN KEY (email) REFERENCES Users ON DELETE CASCADE,
+    FOREIGN KEY (home_address_id) REFERENCES Address(address_id));
+    """)
+
+
+    # ================================
+    # Seller Info
+    # ================================
+    cursor.execute("""
+    CREATE TABLE IF NOT EXISTS Sellers (
+    email TEXT,
+    bank_routing_number TEXT NOT NULL,
+    bank_account_number INTEGER NOT NULL,
+    balance REAL NOT NULL,
+
+    PRIMARY KEY (email)
+    FOREIGN KEY (email) REFERENCES Users ON DELETE CASCADE);
+    """)
+
+    cursor.execute("""
+    CREATE TABLE IF NOT EXISTS Local_Vendors (
+    email TEXT,
+    business_name TEXT NOT NULL,
+    business_address_id TEXT NOT NULL,
+    customer_service_phone_number TEXT NOT NULL,
+
+    PRIMARY KEY (email),
+    FOREIGN KEY (email) REFERENCES Sellers ON DELETE CASCADE,
+    FOREIGN KEY (business_address_id) REFERENCES Address(address_id));
+    """)
+
+    
 
     cursor.execute("""
     CREATE TABLE IF NOT EXISTS Auction_Listing (
