@@ -66,6 +66,18 @@ def load_db():
     FOREIGN KEY (home_address_id) REFERENCES Address(address_id));
     """)
 
+    cursor.execute("""
+    CREATE TABLE IF NOT EXISTS Credit_Cards (
+    credit_card_num TEXT NOT NULL,
+    card_type TEXT NOT NULL,
+    expire_month INTEGER NOT NULL,
+    expire_year INTEGER NOT NULL,
+    security_code INTEGER NOT NULL,
+    owner_email TEXT NOT NULL,
+
+    PRIMARY KEY (credit_card_num, owner_email),
+    FOREIGN KEY (owner_email) REFERENCES Bidders(email) ON DELETE CASCADE);
+    """)
 
     # ================================
     # Seller Info
@@ -93,23 +105,68 @@ def load_db():
     FOREIGN KEY (business_address_id) REFERENCES Address(address_id));
     """)
 
-    
 
+    # ================================
+    # Helpdesk Info
+    # ================================
+    cursor.execute("""
+    CREATE TABLE IF NOT EXISTS Helpdesk (
+    email TEXT,
+    position TEXT NOT NULL,
+    
+    PRIMARY KEY (email)
+    FOREIGN KEY (email) REFERENCES Users ON DELETE CASCADE);
+    """)
+
+
+    # ================================
+    # Category Info
+    # ================================
+    cursor.execute("""
+    CREATE TABLE IF NOT EXISTS Categories (
+    parent_category TEXT NOT NULL,
+    category_name TEXT,
+
+    PRIMARY KEY (category_name));
+    """)
+
+
+    # ================================
+    # Auction Info
+    # ================================
     cursor.execute("""
     CREATE TABLE IF NOT EXISTS Auction_Listing (
     seller_email TEXT,
     listing_id INTEGER,
     category TEXT,
-    auction_title TEXT,
-    product_name TEXT,
+    auction_title TEXT NOT NULL,
+    product_name TEXT NOT NULL,
     product_description TEXT,
-    quantity INTEGER,
-    reserve_price REAL,
-    max_bids INTEGER,
-    status INTEGER,
+    quantity INTEGER NOT NULL,
+    reserve_price REAL NOT NULL,
+    max_bids INTEGER NOT NULL,
+    status INTEGER NOT NULL,
+
     PRIMARY KEY (listing_id),
-    FOREIGN KEY (seller_email) REFERENCES Sellers(email) ON DELETE SET NULL);
+    FOREIGN KEY (seller_email) REFERENCES Sellers(email) ON DELETE SET NULL,
+    FOREIGN KEY (category) REFERENCES Categories(category_name) ON DELETE SET NULL);
     """)
+
+    cursor.execute("""
+    CREATE TABLE IF NOT EXISTS Bids (
+    bid_id INTEGER,
+    seller_email TEXT NOT NULL,
+    listing_id INTEGER NOT NULL,
+    bidder_email TEXT NOT NULL,
+    bid_price REAL NOT NULL,
+
+    PRIMARY KEY (bid_id),
+    FOREIGN KEY (seller_email) REFERENCES Sellers(email) ON DELETE CASCADE,
+    FOREIGN KEY (listing_id) REFERENCES Ausction_Listing ON DELETE CASCADE,
+    FOREIGN KEY (bidder_email) REFERENCES Bidders(email) ON DELETE CASCADE);
+    """)
+
+
 
 
 
