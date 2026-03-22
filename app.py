@@ -118,6 +118,20 @@ def load_db():
     FOREIGN KEY (email) REFERENCES Users ON DELETE CASCADE);
     """)
 
+    cursor.execute("""
+    CREATE TABLE IF NOT EXISTS Requests (
+    request_id INTEGER,
+    sender_email TEXT NOT NULL,
+    helpdesk_staff_email TEXT NOT NULL,
+    request_type TEXT NOT NULL,
+    request_desc TEXT NOT NULL,
+    request_status INTEGER NOT NULL,
+
+    PRIMARY KEY (request_id),
+    FOREIGN KEY (sender_email) REFERENCES Users(email) ON DELETE CASCADE,
+    FOREIGN KYE (helpdesk_staff_email) REFERENCES Helpdesk(email) ON DELETE CASCADE);
+    """)
+
 
     # ================================
     # Category Info
