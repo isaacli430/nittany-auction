@@ -1,3 +1,8 @@
 .DS_Store
 database.db
 .idea/
+Lib/
+Scripts/
+Include/
+pyvenv.cfg
+.env
