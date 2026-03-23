@@ -4,9 +4,9 @@
 
 ## How to Execute Our Project
 
-1. If this is your first time executing our project:\
-&nbsp;&nbsp;&nbsp;&nbsp;a. Run `pip install -r requirements.txt`\
-&nbsp;&nbsp;&nbsp;&nbsp;b. Run `python setup.py`
+1. If this is your first time executing our project:
+   &nbsp;&nbsp;&nbsp;&nbsp;a. Run `pip install -r requirements.txt`
+   &nbsp;&nbsp;&nbsp;&nbsp;b. Run `python setup.py`
 2. Run `flask run` or `python -m flask run`
 
 ## Python Library Requirements
@@ -43,29 +43,29 @@ The logout page redirects the user upon accessing. If the user is logged in, the
 
 ## Code Directory
 
-└── nittany-auction\
-&nbsp;&nbsp;&nbsp;&nbsp;├── NittanyAuctionDataset_v1\
-&nbsp;&nbsp;&nbsp;&nbsp;│&nbsp;&nbsp;&nbsp;&nbsp;├── Address.csv\
-&nbsp;&nbsp;&nbsp;&nbsp;│&nbsp;&nbsp;&nbsp;&nbsp;├── Auction_Listing.csv\
-&nbsp;&nbsp;&nbsp;&nbsp;│&nbsp;&nbsp;&nbsp;&nbsp;├── Bidders.csv\
-&nbsp;&nbsp;&nbsp;&nbsp;│&nbsp;&nbsp;&nbsp;&nbsp;├── Bids.csv\
-&nbsp;&nbsp;&nbsp;&nbsp;│&nbsp;&nbsp;&nbsp;&nbsp;├── Categories.csv\
-&nbsp;&nbsp;&nbsp;&nbsp;│&nbsp;&nbsp;&nbsp;&nbsp;├── Credit_Cards.csv\
-&nbsp;&nbsp;&nbsp;&nbsp;│&nbsp;&nbsp;&nbsp;&nbsp;├── Helpdesk.csv\
-&nbsp;&nbsp;&nbsp;&nbsp;│&nbsp;&nbsp;&nbsp;&nbsp;├── Local_Vendors.csv\
-&nbsp;&nbsp;&nbsp;&nbsp;│&nbsp;&nbsp;&nbsp;&nbsp;├── Ratings.csv\
-&nbsp;&nbsp;&nbsp;&nbsp;│&nbsp;&nbsp;&nbsp;&nbsp;├── Requests.csv\
-&nbsp;&nbsp;&nbsp;&nbsp;│&nbsp;&nbsp;&nbsp;&nbsp;├── Sellers.csv\
-&nbsp;&nbsp;&nbsp;&nbsp;│&nbsp;&nbsp;&nbsp;&nbsp;├── Transactions.csv\
-&nbsp;&nbsp;&nbsp;&nbsp;│&nbsp;&nbsp;&nbsp;&nbsp;├── Users.csv\
-&nbsp;&nbsp;&nbsp;&nbsp;│&nbsp;&nbsp;&nbsp;&nbsp;└── Zipcode_Info.csv\
-&nbsp;&nbsp;&nbsp;&nbsp;├── templates\
-&nbsp;&nbsp;&nbsp;&nbsp;│&nbsp;&nbsp;&nbsp;&nbsp;├── base.html\
-&nbsp;&nbsp;&nbsp;&nbsp;│&nbsp;&nbsp;&nbsp;&nbsp;├── index.html\
-&nbsp;&nbsp;&nbsp;&nbsp;│&nbsp;&nbsp;&nbsp;&nbsp;└── login.html\
-&nbsp;&nbsp;&nbsp;&nbsp;├── .gitignore\
-&nbsp;&nbsp;&nbsp;&nbsp;├── app.py\
-&nbsp;&nbsp;&nbsp;&nbsp;├── create_db.sql\
-&nbsp;&nbsp;&nbsp;&nbsp;├── README.md\
-&nbsp;&nbsp;&nbsp;&nbsp;├── requirements.txt\
-&nbsp;&nbsp;&nbsp;&nbsp;└── setup.py\
+└── nittany-auction
+&nbsp;&nbsp;&nbsp;&nbsp;├── NittanyAuctionDataset_v1
+&nbsp;&nbsp;&nbsp;&nbsp;│&nbsp;&nbsp;&nbsp;&nbsp;├── Address.csv
+&nbsp;&nbsp;&nbsp;&nbsp;│&nbsp;&nbsp;&nbsp;&nbsp;├── Auction_Listing.csv
+&nbsp;&nbsp;&nbsp;&nbsp;│&nbsp;&nbsp;&nbsp;&nbsp;├── Bidders.csv
+&nbsp;&nbsp;&nbsp;&nbsp;│&nbsp;&nbsp;&nbsp;&nbsp;├── Bids.csv
+&nbsp;&nbsp;&nbsp;&nbsp;│&nbsp;&nbsp;&nbsp;&nbsp;├── Categories.csv
+&nbsp;&nbsp;&nbsp;&nbsp;│&nbsp;&nbsp;&nbsp;&nbsp;├── Credit_Cards.csv
+&nbsp;&nbsp;&nbsp;&nbsp;│&nbsp;&nbsp;&nbsp;&nbsp;├── Helpdesk.csv
+&nbsp;&nbsp;&nbsp;&nbsp;│&nbsp;&nbsp;&nbsp;&nbsp;├── Local_Vendors.csv
+&nbsp;&nbsp;&nbsp;&nbsp;│&nbsp;&nbsp;&nbsp;&nbsp;├── Ratings.csv
+&nbsp;&nbsp;&nbsp;&nbsp;│&nbsp;&nbsp;&nbsp;&nbsp;├── Requests.csv
+&nbsp;&nbsp;&nbsp;&nbsp;│&nbsp;&nbsp;&nbsp;&nbsp;├── Sellers.csv
+&nbsp;&nbsp;&nbsp;&nbsp;│&nbsp;&nbsp;&nbsp;&nbsp;├── Transactions.csv
+&nbsp;&nbsp;&nbsp;&nbsp;│&nbsp;&nbsp;&nbsp;&nbsp;├── Users.csv
+&nbsp;&nbsp;&nbsp;&nbsp;│&nbsp;&nbsp;&nbsp;&nbsp;└── Zipcode_Info.csv
+&nbsp;&nbsp;&nbsp;&nbsp;├── templates
+&nbsp;&nbsp;&nbsp;&nbsp;│&nbsp;&nbsp;&nbsp;&nbsp;├── base.html
+&nbsp;&nbsp;&nbsp;&nbsp;│&nbsp;&nbsp;&nbsp;&nbsp;├── index.html
+&nbsp;&nbsp;&nbsp;&nbsp;│&nbsp;&nbsp;&nbsp;&nbsp;└── login.html
+&nbsp;&nbsp;&nbsp;&nbsp;├── .gitignore
+&nbsp;&nbsp;&nbsp;&nbsp;├── app.py
+&nbsp;&nbsp;&nbsp;&nbsp;├── create_db.sql
+&nbsp;&nbsp;&nbsp;&nbsp;├── README.md
+&nbsp;&nbsp;&nbsp;&nbsp;├── requirements.txt
+&nbsp;&nbsp;&nbsp;&nbsp;└── setup.py
