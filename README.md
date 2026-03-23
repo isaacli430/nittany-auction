@@ -42,9 +42,9 @@ The logout page redirects the user upon accessing. If the user is logged in, the
 ## Code Directory
 
 └── nittany-auction\
-&nbsp;├── NittanyAuctionDataset_v1\
-&nbsp;│   ├── Address.csv\
-&nbsp;│   ├── Auction_Listing.csv\
+&nbsp;&nbsp;&nbsp;&nbsp;├── NittanyAuctionDataset_v1\
+&nbsp;&nbsp;&nbsp;&nbsp;│&nbsp;&nbsp;&nbsp;&nbsp;├── Address.csv\
+&nbsp;&nbsp;│   ├── Auction_Listing.csv\
 &nbsp;│   ├── Bidders.csv\
 &nbsp;│   ├── Bids.csv\
 &nbsp;│   ├── Categories.csv\
