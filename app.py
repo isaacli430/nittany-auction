@@ -1,10 +1,10 @@
 # ================================
 # Imports and Flask Setup
 # ================================
-from flask import Flask, render_template, request
+from flask import Flask, render_template, request, session, redirect, url_for
 import random
 import sqlite3 as sql
-
+import hashlib
 import secrets
 
 app = Flask(__name__)
@@ -37,9 +37,14 @@ def index():
 
 @app.route('/login', methods = ['GET', 'POST'])
 def login():
+    if 'email' in session:
+        return redirect(url_for('index'))
+
     if request.method == 'POST':
         email = request.form['email']
         password = request.form['password']
+
+        password = hashlib.sha256(password.encode('utf-8')).hexdigest()
 
         connection = sql.connect("database.db")
         cursor = connection.cursor()
@@ -50,6 +55,9 @@ def login():
 
         if len(results) == 0:
             return render_template('login.html', fail = True)
+
+        session['email'] = email
+        return redirect(url_for('index'))
         
 
     return render_template('login.html')
