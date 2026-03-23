@@ -5,17 +5,13 @@
 1. If this is your first time executing our project:
    a. Run `pip install -r requirements.txt`
    b. Run `python setup.py`
-2. Run `python app.py`
+2. Run `flask run` or `python -m flask run`
 
 ## Python Library Requirements
 
 - flask
 - python-dotenv
 - pandas
-
-## The webpage layout
-
-The webpage is constructed through flask and several html pages. Currently the index contains two links, which change depending on the user's login status: "homepage" and "logout" for logged-in users and "homepage" and "login" for not logged-in users (these links stay constant across all pages until login status is changed). The base page/homepage shows user login status (either "logged in as" and then the user's username or "not logged in"), along with the user's role(s) (i.e. seller, bidder, or helpdesk) if they are logged-in. The login page has fields for inputting username (not hidden) and password (hidden), as well as a submit button; the logout features a lone "logout" button.
 
 ## Project Features
 
@@ -35,33 +31,39 @@ To populate the database, `setup.py` reads each `.csv` file in `NittanyAuctionDa
 
 ### User Login
 
-Upon pressing the submit button on the login page, one of two things will happen. If the incorrect credentials are given or empty fields are present, then a "failed" message is displayed to the user and the user remains on the login page. Otherwise, the user gets taken back to the base page and the index is updated to say "logged in as" and then their username and role (either seller, bidder, or helpdesk). The logout page simply offers a "logout" button that, when pressed, takes the user back to the homepage and updates the index to say "not logged in".
+The webpage is constructed through `Flask` and several `.html` pages. Currently, the index contains two links, which change depending on the user's login status: `Homepage` and `Logout` for logged-in users, and `Homepage` and `Login` for not logged-in users (these links stay constant across all pages until login status is changed).
+
+The homepage shows user login status (either `Logged in as: <email>` or `Not logged in`), along with the user's role(s) (i.e. `seller`, `bidder`, or `helpdesk`) if they are logged in.
+
+The login page has fields for inputting `email` (not hidden) and `password` (hidden), as well as a submit button. Upon pressing the submit button in the login page, one of two things will happen. If the incorrect credentials are given or empty fields are present, then a `Failed!` message is displayed to the user and the user remains on the login page. Otherwise, the user gets taken back to the updated homepage containing the user info mentioned above.
+
+The logout page redirects the user upon accessing. If the user is logged in, then the user is logged out and redirected back to an updated homepage. Otherwise, the user is redirected to the login page.
 
 ## Code Directory
+
 └── nittany-auction
-    ├── NittanyAuctionDataset_v1
-    │   ├── Address.csv
-    │   ├── Auction_Listing.csv
-    │   ├── Bidders.csv
-    │   ├── Bids.csv
-    │   ├── Categories.csv
-    │   ├── Credit_Cards.csv
-    │   ├── Helpdesk.csv
-    │   ├── Local_Vendors.csv
-    │   ├── Ratings.csv
-    │   ├── Requests.csv
-    │   ├── Sellers.csv
-    │   ├── Transactions.csv
-    │   ├── Users.csv
-    │   └── Zipcode_Info.csv
-    ├── templates
-    │   ├── base.html
-    │   ├── index.html
-    │   ├── login.html
-    │   ├── logout.html
-    ├── .gitignore
-    ├── app.py
-    ├── create_db.sql
-    ├── README.md
-    ├── requirements.txt
-    └── setup.py
+├── NittanyAuctionDataset_v1
+│   ├── Address.csv
+│   ├── Auction_Listing.csv
+│   ├── Bidders.csv
+│   ├── Bids.csv
+│   ├── Categories.csv
+│   ├── Credit_Cards.csv
+│   ├── Helpdesk.csv
+│   ├── Local_Vendors.csv
+│   ├── Ratings.csv
+│   ├── Requests.csv
+│   ├── Sellers.csv
+│   ├── Transactions.csv
+│   ├── Users.csv
+│   └── Zipcode_Info.csv
+├── templates
+│   ├── base.html
+│   ├── index.html
+│   └── login.html
+├── .gitignore
+├── app.py
+├── create_db.sql
+├── README.md
+├── requirements.txt
+└── setup.py

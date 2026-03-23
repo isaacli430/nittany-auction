@@ -9,7 +9,6 @@ import hashlib, os
 load_dotenv()
 
 app = Flask(__name__)
-host = 'http://127.0.0.1:5000/'
 
 app.secret_key = os.getenv('SECRET_KEY')
 
@@ -72,17 +71,11 @@ def login():
 
     return render_template('login.html')
 
-@app.route('/logout', methods = ['GET', 'POST'])
+@app.route('/logout')
 def logout():
     if 'email' not in session:
         return redirect(url_for('login'))
 
-    if request.method == 'POST':
-        session.pop('email', None)
-        session['roles'] = []
-        return redirect(url_for('login'))
-
-    return render_template('logout.html', email = session['email'])
-
-if __name__ == "__main__":
-    app.run()
+    session.pop('email', None)
+    session['roles'] = []
+    return redirect(url_for('login'))
