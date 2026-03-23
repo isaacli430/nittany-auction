@@ -4,7 +4,7 @@
 
 1. If this is your first time executing our project:\
 &nbsp;&nbsp;&nbsp;&nbsp;a. Run `pip install -r requirements.txt`\
-&nbsp;&nbsp;&nbsp;&nbsp;b. Run `python setup.py`\
+&nbsp;&nbsp;&nbsp;&nbsp;b. Run `python setup.py`
 2. Run `flask run` or `python -m flask run`
 
 ## Python Library Requirements
