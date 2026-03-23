@@ -2,10 +2,10 @@ import pandas as pd
 import sqlite3 as sql
 import hashlib, os, secrets
 
-#this script is for taking csv files in the same working directory and using them to 
-#populate the database (this assumes that create_db.sql has already been run).
-#Relations will be populated by csvs with the same name. Making this as a seperate file
-#from app.py to prevent issues with commit conflicts
+# This script is for taking csv files in the same working directory and using them to 
+# populate the database (this assumes that create_db.sql has already been run).
+# Relations will be populated by csvs with the same name. Making this as a seperate file
+# from app.py to prevent issues with commit conflicts
 
 def create_db():
     with open("create_db.sql") as f:

@@ -9,7 +9,6 @@ import hashlib, os
 load_dotenv()
 
 app = Flask(__name__)
-
 app.secret_key = os.getenv('SECRET_KEY')
 
 
@@ -24,6 +23,9 @@ def index():
     return render_template('index.html')
 
 
+# ================================
+# Login page
+# ================================
 @app.route('/login', methods = ['GET', 'POST'])
 def login():
     if 'email' in session:
@@ -66,11 +68,16 @@ def login():
         if len(results) > 0:
             session['roles'].append('helpdesk')
 
-        
+
+        connection.close()
         return redirect(url_for('index'))
 
     return render_template('login.html')
 
+
+# ================================
+# Logout page
+# ================================
 @app.route('/logout')
 def logout():
     if 'email' not in session:
