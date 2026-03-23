@@ -32,6 +32,9 @@ def load_db():
 # ================================
 @app.route('/')
 def index():
+    if 'email' in session:
+        return render_template('index.html', email = session['email'])
+
     return render_template('index.html')
 
 
@@ -58,9 +61,19 @@ def login():
 
         session['email'] = email
         return redirect(url_for('index'))
-        
 
     return render_template('login.html')
+
+@app.route('/logout', methods = ['GET', 'POST'])
+def logout():
+    if 'email' not in session:
+        return redirect(url_for('login'))
+
+    if request.method == 'POST':
+        session.pop('email', None)
+        return redirect(url_for('login'))
+
+    return render_template('logout.html', email = session['email'])
 
 if __name__ == "__main__":
     load_db()

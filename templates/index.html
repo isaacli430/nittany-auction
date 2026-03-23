@@ -2,4 +2,14 @@
 
 {% block title %}Homepage{% endblock %}
 
-{% block content %}Homepage{% endblock %}
+{% block content %}
+
+<p>Homepage</p>
+
+{% if email %}
+<p>Logged in as {{ email }}</p>
+{% else %}
+<p>Not logged in</p>
+{% endif %}
+
+{% endblock %}
