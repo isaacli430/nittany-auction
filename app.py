@@ -85,4 +85,4 @@ def logout():
 
     session.pop('email', None)
     session['roles'] = []
-    return redirect(url_for('login'))
+    return redirect(url_for('index'))
