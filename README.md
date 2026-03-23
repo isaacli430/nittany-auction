@@ -42,28 +42,28 @@ The logout page redirects the user upon accessing. If the user is logged in, the
 ## Code Directory
 
 └── nittany-auction\
-    ├── NittanyAuctionDataset_v1\
-    │   ├── Address.csv\
-    │   ├── Auction_Listing.csv\
-    │   ├── Bidders.csv\
-    │   ├── Bids.csv\
-    │   ├── Categories.csv\
-    │   ├── Credit_Cards.csv\
-    │   ├── Helpdesk.csv\
-    │   ├── Local_Vendors.csv\
-    │   ├── Ratings.csv\
-    │   ├── Requests.csv\
-    │   ├── Sellers.csv\
-    │   ├── Transactions.csv\
-    │   ├── Users.csv\
-    │   └── Zipcode_Info.csv\
-    ├── templates\
-    │   ├── base.html\
-    │   ├── index.html\
-    │   └── login.html\
-    ├── .gitignore\
-    ├── app.py\
-    ├── create_db.sql\
-    ├── README.md\
-    ├── requirements.txt\
-    └── setup.py\
+&nbsp;├── NittanyAuctionDataset_v1\
+&nbsp;│   ├── Address.csv\
+&nbsp;│   ├── Auction_Listing.csv\
+&nbsp;│   ├── Bidders.csv\
+&nbsp;│   ├── Bids.csv\
+&nbsp;│   ├── Categories.csv\
+&nbsp;│   ├── Credit_Cards.csv\
+&nbsp;│   ├── Helpdesk.csv\
+&nbsp;│   ├── Local_Vendors.csv\
+&nbsp;│   ├── Ratings.csv\
+&nbsp;│   ├── Requests.csv\
+&nbsp;│   ├── Sellers.csv\
+&nbsp;│   ├── Transactions.csv\
+&nbsp;│   ├── Users.csv\
+&nbsp;│   └── Zipcode_Info.csv\
+&nbsp;├── templates\
+&nbsp;│   ├── base.html\
+&nbsp;│   ├── index.html\
+&nbsp;│   └── login.html\
+&nbsp;├── .gitignore\
+&nbsp;├── app.py\
+&nbsp;├── create_db.sql\
+&nbsp;├── README.md\
+&nbsp;├── requirements.txt\
+&nbsp;└── setup.py\
