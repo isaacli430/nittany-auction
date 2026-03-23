@@ -2,15 +2,18 @@
 # Imports and Flask Setup
 # ================================
 from flask import Flask, render_template, request, session, redirect, url_for
-import random
 import sqlite3 as sql
-import hashlib
-import secrets
+from dotenv import load_dotenv
+import hashlib, os
+
+load_dotenv()
 
 app = Flask(__name__)
 host = 'http://127.0.0.1:5000/'
 
-app.secret_key = secrets.token_bytes()
+# For this run the following and store it in SECRET_KEY in a .env file:
+# python -c 'import secrets; print(secrets.token_hex())'
+app.secret_key = os.getenv('SECRET_KEY')
 
 def load_db():
     with open("create_db.sql") as f:
