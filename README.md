@@ -1,5 +1,7 @@
 # Mini-summary of our work (for prog check)
 
+<sub>*For a proper view of the README, visit [here](https://github.com/isaacli430/nittany-auction).*</sub>
+
 ## How to Execute Our Project
 
 1. If this is your first time executing our project:\
