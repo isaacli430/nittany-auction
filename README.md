@@ -1,13 +1,67 @@
 # Mini-summary of our work (for prog check)
 
+## How to Execute Our Project
+
+1. If this is your first time executing our project:
+   a. Run `pip install -r requirements.txt`
+   b. Run `python setup.py`
+2. Run `python app.py`
+
+## Python Library Requirements
+
+- flask
+- python-dotenv
+- pandas
+
 ## The webpage layout
 
-The webpage is constructed through flask and several html pages. Currently the index contains two links, which change depending on the user's login status: "homepage" and "logout" for logged-in users and "homepage" and "login" for not logged-in users (these links stay constant across all pages until login status is changed). The base page/homepage shows user login status (either "logged in as" and then the user's username or "not logged in"), along with the user's role (i.e. seller, bidder, or helpdesk) if they are logged-in. The login page has fields for inputting username (not hidden) and password (hidden), as well as a submit button; the logout features a lone "logout" button.
+The webpage is constructed through flask and several html pages. Currently the index contains two links, which change depending on the user's login status: "homepage" and "logout" for logged-in users and "homepage" and "login" for not logged-in users (these links stay constant across all pages until login status is changed). The base page/homepage shows user login status (either "logged in as" and then the user's username or "not logged in"), along with the user's role(s) (i.e. seller, bidder, or helpdesk) if they are logged-in. The login page has fields for inputting username (not hidden) and password (hidden), as well as a submit button; the logout features a lone "logout" button.
 
-## Database Creation and Population
+## Project Features
 
-The app.py file, in addition to containing all the functions needed for flask to run the website, also contains a function called load_db. This function's only purpose is to create the database named "database.db" (the main backend of NittanyAuction) if it does not exist already, and then run the create_db SQL file. This SQL file creates the all the necessary relations if they are not already present. After the database has been created, it can be manually populated using e.g. data imports via pycharm, or it can be auto-populated with the separate python file populate_db.py. The populate_db.py file assumes database.db already exists with all relevant fields. It reads each csv in the NittanyAuctionDataset_v1 directory into a pandas dataframe, naming the dataframe after the file name (minus the .csv extension). Then it uses the .to_sql function in pandas to export that dataframe to the relation in database.db whose name matches the dataframe's name; the only exception is the Users dataframe, whose password column has the sha256 hash function applied to it before being exported to the Users relation in the database. 
+### Basic Setup
 
-## Login process
+The `requirements.txt` file contains all the Python libraries required to run our project, and must be used to install the required libraries first to run our project.
 
-Upon pressing the submit button on the login page, one of two things will happen. If the incorrect credentials are given or empty fields are present, then a "failed" message is displayed to the user and the user remains on the login page. Otherwise, the user gets taken back to the base page and the index is updated to say "logged in as" and then their username and role (either seller, bidder, or helpdesk). The logout page simply offers a "logout" button that, when pressed, takes the user back to the homepage and updates the index to say "not logged in". 
+Alongside that, the `setup.py` file creates the `SECRET_KEY` environment variable that will be used by Flask's session manager, and must also be run in order to set up the project.
+
+### Database Creation and Population
+
+The `setup.py` file also handles the creation and population of the database.
+
+To create the database, `setup.py` connects to `database.db` and executes `create_db.sql`, which contains the `CREATE TABLE` codes for all the relations, and creates the relations if they do not already exist.
+
+To populate the database, `setup.py` reads each `.csv` file in `NittanyAuctionDataset_v1`, which contains all the datasets organized into relations and their respective columns. Each relation is then converted into a `pandas` DataFrame, and then uses `panda`'s `.to_sql()` function to export each relation into `database.db`. The only exception is the `Users` relation, where the `password` field is run through a SHA256 function before exporting.
+
+### User Login
+
+Upon pressing the submit button on the login page, one of two things will happen. If the incorrect credentials are given or empty fields are present, then a "failed" message is displayed to the user and the user remains on the login page. Otherwise, the user gets taken back to the base page and the index is updated to say "logged in as" and then their username and role (either seller, bidder, or helpdesk). The logout page simply offers a "logout" button that, when pressed, takes the user back to the homepage and updates the index to say "not logged in".
+
+## Code Directory
+└── nittany-auction
+    ├── NittanyAuctionDataset_v1
+    │   ├── Address.csv
+    │   ├── Auction_Listing.csv
+    │   ├── Bidders.csv
+    │   ├── Bids.csv
+    │   ├── Categories.csv
+    │   ├── Credit_Cards.csv
+    │   ├── Helpdesk.csv
+    │   ├── Local_Vendors.csv
+    │   ├── Ratings.csv
+    │   ├── Requests.csv
+    │   ├── Sellers.csv
+    │   ├── Transactions.csv
+    │   ├── Users.csv
+    │   └── Zipcode_Info.csv
+    ├── templates
+    │   ├── base.html
+    │   ├── index.html
+    │   ├── login.html
+    │   ├── logout.html
+    ├── .gitignore
+    ├── app.py
+    ├── create_db.sql
+    ├── README.md
+    ├── requirements.txt
+    └── setup.py
