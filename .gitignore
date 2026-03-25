@@ -9,3 +9,4 @@ pyvenv.cfg
 __pycache__/
 nittany-auction/
 *.zip
+client/node_modules/

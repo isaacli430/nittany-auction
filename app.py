@@ -1,26 +1,31 @@
 # ================================
 # Imports and Flask Setup
 # ================================
-from flask import Flask, render_template, request, session, redirect, url_for
+from flask import Flask, render_template, request, session, redirect, url_for, send_from_directory
 import sqlite3 as sql
 from dotenv import load_dotenv
 import hashlib, os
 
 load_dotenv()
 
-app = Flask(__name__)
+app = Flask(__name__, static_folder='client/dist')
 app.secret_key = os.getenv('SECRET_KEY')
 
 
 # ================================
 # Homepage
 # ================================
-@app.route('/')
-def index():
-    if 'email' in session:
-        return render_template('index.html', email = session['email'], roles = ', '.join(session['roles']))
+@app.route('/', defaults={'path': ''})
+@app.route('/<path:path>')
+def index(path):
+    if path != "" and os.path.exists(app.static_folder + '/' + path):
+        return send_from_directory(app.static_folder, path)
+    else:
+        return send_from_directory(app.static_folder, 'index.html')
+    # if 'email' in session:
+    #     return render_template('index.html', email = session['email'], roles = ', '.join(session['roles']))
 
-    return render_template('index.html')
+    # return render_template('index.html')
 
 
 # ================================
