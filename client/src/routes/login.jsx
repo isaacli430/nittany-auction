@@ -57,7 +57,7 @@ const Login = () => {
 
                             <form className='flex flex-col' onSubmit={handleSubmit(onSubmit)} noValidate>
 
-                                <input className={'login-input ' + (errors.email && 'border-red-500!')} placeholder="Email address" {...register("email", {
+                                <input className={'login-input ' + ((errors.email || badLogin) && 'border-red-500!')} placeholder="Email address" {...register("email", {
                                     required: {
                                         value: true,
                                         message: "Email is required."
@@ -68,14 +68,10 @@ const Login = () => {
 
                                 <p className='login-error'><i>
                                     &nbsp;
-                                    {errors.email && (
-                                        <>
-                                            {errors.email.message}
-                                        </>
-                                    )}
+                                    {errors.email && (<>{errors.email.message}</>)}
                                 </i></p>
 
-                                <input className={'login-input ' + (errors.password && 'border-red-500!')} placeholder="Password" type="password" {...register("password", {
+                                <input className={'login-input ' + ((errors.password || badLogin) && 'border-red-500!')} placeholder="Password" type="password" {...register("password", {
                                     required: {
                                         value: true,
                                         message: "Password is required."
@@ -84,18 +80,14 @@ const Login = () => {
 
                                 <p className='login-error'><i>
                                     &nbsp;
-                                    {errors.password && (
-                                        <>
-                                            {errors.password.message}
-                                        </>
-                                    )}
+                                    {errors.password && (<>{errors.password.message}</>)}
+                                    {(!errors.password && badLogin) && (<>Couldn't find your account.</>)}
                                 </i></p>
 
                                 <button type="submit" className='bg-slate-300 w-fit pt-1 pb-1 pr-4 pl-4 rounded-sm hover:brightness-80 cursor-pointer'>Log in</button>
                             </form>
                         </div>
                     </div>
-                    {badLogin && <p>Incorrect credentials!</p>}
                 </>
             }
         </>
