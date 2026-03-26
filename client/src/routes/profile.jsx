@@ -1,29 +1,39 @@
 import { useEffect, useState } from 'react';
+import { useNavigate } from 'react-router-dom';
 
 import validate from "../components/validate";
 import Base from '../components/base';
 
-function Root() {
+function Profile() {
     const [logged, setLogged] = useState(false);
     const [loadDone, setLoadDone] = useState(false);
 
+    const navigate = useNavigate();
+
     useEffect(() => {
+
         validate().then((resp) => {
-            setLogged(resp);
+
+            if (!resp) {
+                navigate('/');
+            }
+
+            setLogged(true);
             setLoadDone(true);
-        });
+        })
+
     });
 
     return (
         <>
             {loadDone && (
                 <>
-                    <Base title="Home" logged={logged} />
-                    <h1>Homepage</h1>
+                    <Base title="Profile" logged={logged} />
+                    <h1>Profile</h1>
                 </>
             )}
         </>
     );
 }
 
-export default Root;
+export default Profile;

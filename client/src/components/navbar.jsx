@@ -26,7 +26,7 @@ const Navbar = ({ logged }) => {
                 <div className='flex flex-col z-10 absolute mt-13 bg-white right-3 rounded-sm pr-0 pl-0 pt-4 pb-4 shadow-lg w-40'>
                     {logged ? (
                         <>
-                            <Link className='profile-link' to="/">View Profile</Link>
+                            <Link className='profile-link' to="/profile">View Profile</Link>
                             <Link className='profile-link' to="/logout">Logout</Link>
                         </>
                     ) : (
