@@ -4,7 +4,7 @@ import validate from "../components/validate";
 
 import { useEffect, useState } from 'react';
 
-function Root() {
+function Products() {
 
     const [logged, setLogged] = useState(false);
     const [loadDone, setLoadDone] = useState(false);
@@ -20,9 +20,9 @@ function Root() {
         <>
             {loadDone &&
                 <>
-                    <PageTitle title="Home" />
+                    <PageTitle title="Products" />
                     <Navbar logged={logged} />
-                    <h1>Homepage</h1>
+                    <h1>Products</h1>
                 </>
             }
         </>
@@ -30,4 +30,4 @@ function Root() {
     )
 }
 
-export default Root;
+export default Products;
