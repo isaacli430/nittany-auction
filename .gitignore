@@ -10,3 +10,4 @@ __pycache__/
 nittany-auction/
 *.zip
 client/node_modules/
+bin/
