@@ -79,7 +79,6 @@ def login():
 @app.route('/api/validate', methods=['GET'])
 def validate():
     token = request.headers.get('Authorization')
-    print(token)
 
     connection = sql.connect("database.db")
     cursor = connection.cursor()
