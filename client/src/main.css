@@ -1,1 +1,9 @@
 @import 'tailwindcss';
+
+.nav-link {
+    @apply hover:backdrop-brightness-90 pr-2.5 pl-2.5 pt-4.5 pb-4.5 text-slate-900;
+}
+
+.profile-link {
+    @apply text-white hover:backdrop-brightness-80 pl-8 pr-8 pt-1.5 pb-1.5 w-full;
+}
