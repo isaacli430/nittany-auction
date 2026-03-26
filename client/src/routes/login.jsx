@@ -30,7 +30,7 @@ const Login = () => {
 
 
     const onSubmit = (data) => {
-        axios.post("http://localhost:5000/api/login", {
+        axios.post("http://127.0.0.1:5000/api/login", {
             email: data.email,
             password: data.password
         })
