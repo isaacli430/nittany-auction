@@ -1,8 +1,7 @@
-import PageTitle from "../components/title";
-import Navbar from "../components/navbar";
-import validate from "../components/validate";
-
 import { useEffect, useState } from 'react';
+
+import validate from "../components/validate";
+import Base from '../components/base';
 
 function Products() {
 
@@ -20,8 +19,7 @@ function Products() {
         <>
             {loadDone &&
                 <>
-                    <PageTitle title="Products" />
-                    <Navbar logged={logged} />
+                    <Base title="Products" logged={logged} />
                     <h1>Products</h1>
                 </>
             }

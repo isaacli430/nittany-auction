@@ -1,8 +1,7 @@
-import PageTitle from "../components/title";
-import Navbar from "../components/navbar";
-import validate from "../components/validate";
-
 import { useEffect, useState } from 'react';
+
+import validate from "../components/validate";
+import Base from '../components/base';
 
 function Root() {
 
@@ -20,8 +19,7 @@ function Root() {
         <>
             {loadDone &&
                 <>
-                    <PageTitle title="Home" />
-                    <Navbar logged={logged} />
+                    <Base title="Home" logged={logged} />
                     <h1>Homepage</h1>
                 </>
             }

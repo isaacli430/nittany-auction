@@ -1,11 +1,11 @@
-import PageTitle from "../components/title";
-import Navbar from "../components/navbar";
-import validate from "../components/validate";
 
 import { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useForm } from 'react-hook-form';
 import axios from 'axios';
+
+import validate from "../components/validate";
+import Base from '../components/base';
 
 const Login = () => {
 
@@ -48,8 +48,7 @@ const Login = () => {
         <>
             {loadDone &&
                 <>
-                    <PageTitle title="Login" />
-                    <Navbar logged={logged} />
+                    <Base title="Login" logged={logged} />
                     <h1>Login</h1>
                     <form onSubmit={handleSubmit(onSubmit)} noValidate>
                         <input placeholder="Email address" {...register("email", {
