@@ -19,13 +19,13 @@ const Navbar = ({ logged }) => {
 
     return (
         <>
-            <nav className='flex pr-4 pl-4 pt-0 pb-0 bg-slate-300'>
+            <nav className='flex pr-4 pl-4 pt-0 pb-0 bg-slate-200'>
                 <Link className='nav-link' to="/">Nittany Auction</Link>
                 <Link className='nav-link' to="/products">Products</Link>
                 <button className='nav-link ml-auto! pr-4! pl-4! hover:cursor-pointer' onClick={toggleMenu}><CgProfile /></button>
             </nav>
             {profileMenu &&
-                <div className='flex flex-col z-10 absolute bg-slate-600 right-3 rounded-sm pr-0 pl-0 pt-4 pb-4 shadow-lg'>
+                <div className='flex flex-col z-10 absolute mt-13 bg-white right-3 rounded-sm pr-0 pl-0 pt-4 pb-4 shadow-lg w-40'>
                     {logged ? (
                         <>
                             <Link className='profile-link' to="/">View Profile</Link>

@@ -1,9 +1,17 @@
 @import 'tailwindcss';
 
 .nav-link {
-    @apply hover:backdrop-brightness-90 pr-2.5 pl-2.5 pt-4.5 pb-4.5 text-slate-900;
+    @apply hover:backdrop-brightness-90 pr-3 pl-3 pt-4.5 pb-4.5 text-slate-800;
 }
 
 .profile-link {
-    @apply text-white hover:backdrop-brightness-80 pl-8 pr-8 pt-1.5 pb-1.5 w-full;
+    @apply text-slate-800 hover:backdrop-brightness-90 pl-8 pr-8 pt-1.5 pb-1.5 w-full;
+}
+
+.login-input {
+    @apply p-1 border rounded-sm border-slate-400 bg-slate-100 w-60;
+}
+
+.login-error {
+    @apply text-red-500 text-[11px] -mt-0.5 mb-1;
 }

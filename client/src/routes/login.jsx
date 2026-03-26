@@ -49,35 +49,52 @@ const Login = () => {
             {loadDone &&
                 <>
                     <Base title="Login" logged={logged} />
-                    <h1>Login</h1>
-                    <form onSubmit={handleSubmit(onSubmit)} noValidate>
-                        <input placeholder="Email address" {...register("email", {
-                            required: {
-                                value: true,
-                                message: "Email is required."
-                            },
-                            validate: (value) =>
-                                /^.+@.+\..+$/.test(value) || "Invalid email address."
-                        })} />
 
-                        {errors.email && <p>{errors.email.message}</p>}
+                    <div className='flex justify-center items-center h-full'>
 
-                        <br />
+                        <div className='flex flex-col shadow-lg bg-white rounded-sm p-10'>
+                            <h1 className='text-2xl mb-5'><b>Login</b></h1>
 
-                        <input placeholder="Password" type="password" {...register("password", {
-                            required: {
-                                value: true,
-                                message: "Password is required."
-                            },
-                        })} />
+                            <form className='flex flex-col' onSubmit={handleSubmit(onSubmit)} noValidate>
 
-                        {errors.password && <p>{errors.password.message}</p>}
+                                <input className={'login-input ' + (errors.email && 'border-red-500!')} placeholder="Email address" {...register("email", {
+                                    required: {
+                                        value: true,
+                                        message: "Email is required."
+                                    },
+                                    validate: (value) =>
+                                        /^.+@.+\..+$/.test(value) || "Invalid email address."
+                                })} />
 
-                        <br />
+                                <p className='login-error'><i>
+                                    &nbsp;
+                                    {errors.email && (
+                                        <>
+                                            {errors.email.message}
+                                        </>
+                                    )}
+                                </i></p>
 
-                        <button type="submit">Log in</button>
-                    </form>
+                                <input className={'login-input ' + (errors.password && 'border-red-500!')} placeholder="Password" type="password" {...register("password", {
+                                    required: {
+                                        value: true,
+                                        message: "Password is required."
+                                    },
+                                })} />
 
+                                <p className='login-error'><i>
+                                    &nbsp;
+                                    {errors.password && (
+                                        <>
+                                            {errors.password.message}
+                                        </>
+                                    )}
+                                </i></p>
+
+                                <button type="submit" className='bg-slate-300 w-fit pt-1 pb-1 pr-4 pl-4 rounded-sm hover:brightness-80 cursor-pointer'>Log in</button>
+                            </form>
+                        </div>
+                    </div>
                     {badLogin && <p>Incorrect credentials!</p>}
                 </>
             }
