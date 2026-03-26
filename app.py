@@ -4,7 +4,6 @@
 from flask import Flask, Response, send_from_directory, request
 import sqlite3 as sql
 from dotenv import load_dotenv
-from flask_cors import CORS
 
 import hashlib, os, json, secrets
 
@@ -12,8 +11,6 @@ load_dotenv()
 
 app = Flask(__name__, static_folder='client/dist')
 app.secret_key = os.getenv('SECRET_KEY')
-
-CORS(app)
 
 # ================================
 # Homepage
