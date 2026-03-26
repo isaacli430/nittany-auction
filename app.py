@@ -1,10 +1,10 @@
 # ================================
 # Imports and Flask Setup
 # ================================
-from flask import Flask, render_template, request, session, redirect, url_for, send_from_directory
+from flask import Flask, Response, send_from_directory, request
 import sqlite3 as sql
 from dotenv import load_dotenv
-import hashlib, os
+import hashlib, os, json, secrets
 
 load_dotenv()
 
@@ -22,75 +22,77 @@ def index(path):
         return send_from_directory(app.static_folder, path)
     else:
         return send_from_directory(app.static_folder, 'index.html')
-    # if 'email' in session:
-    #     return render_template('index.html', email = session['email'], roles = ', '.join(session['roles']))
-
-    # return render_template('index.html')
 
 
 # ================================
 # Login page
 # ================================
-@app.route('/login', methods = ['GET', 'POST'])
+@app.route('/api/login', methods = ['POST'])
 def login():
-    if 'email' in session:
-        return redirect(url_for('index'))
+    email = request.json.get('email')
+    password = request.json.get('password')
 
-    if request.method == 'POST':
-        email = request.form['email']
-        password = request.form['password']
+    password = hashlib.sha256(password.encode('utf-8')).hexdigest()
 
-        password = hashlib.sha256(password.encode('utf-8')).hexdigest()
+    connection = sql.connect("database.db")
+    cursor = connection.cursor()
 
-        connection = sql.connect("database.db")
-        cursor = connection.cursor()
+    cursor.execute("SELECT * FROM Users WHERE email = ? AND password = ?;", (email, password,))
+    results = cursor.fetchall()
 
-        cursor.execute("SELECT * FROM Users WHERE email = ? AND password = ?;", (email, password,))
-        results = cursor.fetchall()
-
-        if len(results) == 0:
-            return render_template('login.html', fail = True)
+    if len(results) == 0:
+        return Response(json.dumps({"error": "wrong credentials"}), status = 401, mimetype = "application/json")
 
 
-        session['email'] = email
-        session['roles'] = []
+    cursor.execute("SELECT * FROM Tokens WHERE email = ?;", (email,))
+    results = cursor.fetchall()
 
-        cursor.execute("SELECT * FROM Bidders WHERE email = ?;", (email,))
-        results = cursor.fetchall()
+    if len(results) == 0:
 
-        if len(results) > 0:
-            session['roles'].append('bidder')
+        token = secrets.token_hex()
+        cursor.execute("SELECT * FROM Tokens WHERE token = ?;", (token,))
+        tokens = cursor.fetchall()
 
-        cursor.execute("SELECT * FROM Sellers WHERE email = ?;", (email,))
-        results = cursor.fetchall()
+        while len(tokens) != 0:
+            token = secrets.token_hex()
+            cursor.execute("SELECT * FROM Tokens WHERE token = ?;", (token,))
+            tokens = cursor.fetchall()
 
-        if len(results) > 0:
-            session['roles'].append('seller')
+        cursor.execute("INSERT INTO Tokens (email, token) VALUES (?, ?);", (email, token,))
+        connection.commit()
 
-        cursor.execute("SELECT * FROM Helpdesk WHERE email = ?;", (email,))
-        results = cursor.fetchall()
+        results = token
 
-        if len(results) > 0:
-            session['roles'].append('helpdesk')
+    else:
+        results = results[0][1]
 
+    connection.close()
 
-        connection.close()
-        return redirect(url_for('index'))
+    print(results)
 
-    return render_template('login.html')
+    return {"token": results}
 
 
 # ================================
-# Logout page
+# Validate
 # ================================
-@app.route('/logout')
-def logout():
-    if 'email' not in session:
-        return redirect(url_for('login'))
+@app.route('/api/validate', methods=['GET'])
+def validate():
+    token = request.headers.get('Authorization')
+    print(token)
 
-    session.pop('email', None)
-    session['roles'] = []
-    return redirect(url_for('index'))
+    connection = sql.connect("database.db")
+    cursor = connection.cursor()
+
+    cursor.execute("SELECT * FROM Tokens WHERE token = ?;", (token,))
+    results = cursor.fetchall()
+
+    if len(results) == 0:
+        return Response(json.dumps({"error": "bad token"}), status = 401, mimetype = "application/json")
+
+    return {"message": "token correct"}
+
+
 
 if __name__ == "__main__":
     app.run()

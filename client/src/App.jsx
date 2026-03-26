@@ -1,34 +1,20 @@
-import { BrowserRouter, Routes, Route, Link } from 'react-router-dom';
+import { BrowserRouter, Routes, Route } from 'react-router-dom';
 
-function Home() {
-  return <h1>Home Page</h1>;
+import Root from "./routes/root";
+import Login from "./routes/login";
+import Logout from "./routes/logout";
+
+const App = () => {
+    return (
+        <BrowserRouter>
+            {/* Routes */}
+            <Routes>
+                <Route path= "/" element={<Root />} />
+                <Route path="/login" element={<Login />} />
+                <Route path="/logout" element={<Logout />} />
+            </Routes>
+        </BrowserRouter>
+    );
 }
 
-function About() {
-  return <h1>About Page</h1>;
-}
-
-function Contact() {
-  return <h1>Contact Page</h1>;
-}
-
-function App() {
-  return (
-    <BrowserRouter>
-      {/* Navigation */}
-      <nav>
-        <Link to="/">Home</Link> |{" "}
-        <Link to="/about">About</Link> |{" "}
-        <Link to="/contact">Contact</Link>
-      </nav>
-
-      {/* Routes */}
-      <Routes>
-        <Route path="/" element={<Home />} />
-        <Route path="/about" element={<About />} />
-        <Route path="/contact" element={<Contact />} />
-      </Routes>
-    </BrowserRouter>
-  );
-}
-export default App
+export default App;

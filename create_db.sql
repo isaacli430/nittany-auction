@@ -5,7 +5,8 @@ CREATE TABLE IF NOT EXISTS Users(
     email TEXT,
     password TEXT NOT NULL,
 
-    PRIMARY KEY (email));
+    PRIMARY KEY (email)
+);
     
 
 -- ================================
@@ -16,7 +17,8 @@ CREATE TABLE IF NOT EXISTS Zipcode_Info (
     city TEXT NOT NULL,
     state TEXT NOT NULL,
 
-    PRIMARY KEY (zipcode));
+    PRIMARY KEY (zipcode)
+);
 
 CREATE TABLE IF NOT EXISTS Address (
     address_id TEXT,
@@ -25,7 +27,8 @@ CREATE TABLE IF NOT EXISTS Address (
     street_name TEXT NOT NULL,
 
     PRIMARY KEY (address_id),
-    FOREIGN KEY (zipcode) REFERENCES Zipcode_Info);
+    FOREIGN KEY (zipcode) REFERENCES Zipcode_Info
+);
 
 
 -- ================================
@@ -41,7 +44,8 @@ CREATE TABLE IF NOT EXISTS Bidders (
 
     PRIMARY KEY (email),
     FOREIGN KEY (email) REFERENCES Users ON DELETE CASCADE,
-    FOREIGN KEY (home_address_id) REFERENCES Address(address_id));
+    FOREIGN KEY (home_address_id) REFERENCES Address(address_id)
+);
 
 CREATE TABLE IF NOT EXISTS Credit_Cards (
     credit_card_num TEXT NOT NULL,
@@ -52,7 +56,8 @@ CREATE TABLE IF NOT EXISTS Credit_Cards (
     owner_email TEXT NOT NULL,
 
     PRIMARY KEY (credit_card_num, owner_email),
-    FOREIGN KEY (owner_email) REFERENCES Bidders(email) ON DELETE CASCADE);
+    FOREIGN KEY (owner_email) REFERENCES Bidders(email) ON DELETE CASCADE
+);
     
 
 -- ================================
@@ -65,7 +70,8 @@ CREATE TABLE IF NOT EXISTS Sellers (
     balance REAL NOT NULL,
 
     PRIMARY KEY (email),
-    FOREIGN KEY (email) REFERENCES Users ON DELETE CASCADE);
+    FOREIGN KEY (email) REFERENCES Users ON DELETE CASCADE
+);
 
 CREATE TABLE IF NOT EXISTS Local_Vendors (
     email TEXT,
@@ -75,7 +81,8 @@ CREATE TABLE IF NOT EXISTS Local_Vendors (
 
     PRIMARY KEY (email),
     FOREIGN KEY (email) REFERENCES Sellers ON DELETE CASCADE,
-    FOREIGN KEY (business_address_id) REFERENCES Address(address_id));
+    FOREIGN KEY (business_address_id) REFERENCES Address(address_id)
+);
     
 
 -- ================================
@@ -86,7 +93,8 @@ CREATE TABLE IF NOT EXISTS Helpdesk (
     position TEXT NOT NULL,
     
     PRIMARY KEY (email),
-    FOREIGN KEY (email) REFERENCES Users ON DELETE CASCADE);
+    FOREIGN KEY (email) REFERENCES Users ON DELETE CASCADE
+);
     
 CREATE TABLE IF NOT EXISTS Requests (
     request_id INTEGER,
@@ -98,7 +106,8 @@ CREATE TABLE IF NOT EXISTS Requests (
 
     PRIMARY KEY (request_id),
     FOREIGN KEY (sender_email) REFERENCES Users(email) ON DELETE CASCADE,
-    FOREIGN KEY (helpdesk_staff_email) REFERENCES Helpdesk(email) ON DELETE CASCADE);
+    FOREIGN KEY (helpdesk_staff_email) REFERENCES Helpdesk(email) ON DELETE CASCADE
+);
     
 
 -- ================================
@@ -124,7 +133,8 @@ CREATE TABLE IF NOT EXISTS Auction_Listing (
 
     PRIMARY KEY (listing_id),
     FOREIGN KEY (seller_email) REFERENCES Sellers(email) ON DELETE SET NULL,
-    FOREIGN KEY (category) REFERENCES Categories(category_name) ON DELETE SET NULL);
+    FOREIGN KEY (category) REFERENCES Categories(category_name) ON DELETE SET NULL
+);
     
 CREATE TABLE IF NOT EXISTS Bids (
     bid_id INTEGER,
@@ -136,7 +146,8 @@ CREATE TABLE IF NOT EXISTS Bids (
     PRIMARY KEY (bid_id),
     FOREIGN KEY (seller_email) REFERENCES Sellers(email) ON DELETE CASCADE,
     FOREIGN KEY (listing_id) REFERENCES Ausction_Listing ON DELETE CASCADE,
-    FOREIGN KEY (bidder_email) REFERENCES Bidders(email) ON DELETE CASCADE);
+    FOREIGN KEY (bidder_email) REFERENCES Bidders(email) ON DELETE CASCADE
+);
     
 CREATE TABLE IF NOT EXISTS Transactions (
     transaction_id INTEGER,
@@ -149,7 +160,8 @@ CREATE TABLE IF NOT EXISTS Transactions (
     PRIMARY KEY (transaction_id),
     FOREIGN KEY (seller_email) REFERENCES Sellers(email) ON DELETE SET NULL,
     FOREIGN KEY (listing_id) REFERENCES Auction_Listing,
-    FOREIGN KEY (bidder_email) REFERENCES Bidders(email) ON DELETE SET NULL);
+    FOREIGN KEY (bidder_email) REFERENCES Bidders(email) ON DELETE SET NULL
+);
     
 CREATE TABLE IF NOT EXISTS Ratings (
     bidder_email TEXT NOT NULL,
@@ -160,5 +172,13 @@ CREATE TABLE IF NOT EXISTS Ratings (
 
     PRIMARY KEY (bidder_email, seller_email, date),
     FOREIGN KEY (bidder_email) REFERENCES Bidders(email) ON DELETE CASCADE,
-    FOREIGN KEY (seller_email) REFERENCES Sellers(email) ON DELETE CASCADE);
+    FOREIGN KEY (seller_email) REFERENCES Sellers(email) ON DELETE CASCADE
+);
     
+CREATE TABLE IF NOT EXISTS Tokens(
+    email TEXT,
+    token TEXT NOT NULL UNIQUE,
+
+    PRIMARY KEY (email),
+    FOREIGN KEY (email) REFERENCES Users ON DELETE CASCADE
+);
