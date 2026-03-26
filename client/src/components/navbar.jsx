@@ -25,17 +25,17 @@ const Navbar = ({ logged }) => {
                 <button className='nav-link ml-auto! pr-4! pl-4! hover:cursor-pointer' onClick={toggleMenu}><CgProfile /></button>
             </nav>
             {profileMenu &&
-                    <div className='z-10 absolute bg-slate-600 right-3 rounded-sm pr-0 pl-0 pt-4 pb-4 shadow-lg'>
-                        {logged ? (
-                            <>
-                                <Link className='profile-link' to="/">View Profile</Link>
-                                <Link className='profile-link' to="/logout">Logout</Link>
-                            </>
-                        ) : (
-                            <Link className='profile-link' to="/login">Login</Link>
-                        )}
-                    </div>
-                }
+                <div className='flex flex-col z-10 absolute bg-slate-600 right-3 rounded-sm pr-0 pl-0 pt-4 pb-4 shadow-lg'>
+                    {logged ? (
+                        <>
+                            <Link className='profile-link' to="/">View Profile</Link>
+                            <Link className='profile-link' to="/logout">Logout</Link>
+                        </>
+                    ) : (
+                        <Link className='profile-link' to="/login">Login</Link>
+                    )}
+                </div>
+            }
         </>
     )
 }

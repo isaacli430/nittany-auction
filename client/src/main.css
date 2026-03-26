@@ -5,5 +5,5 @@
 }
 
 .profile-link {
-    @apply text-white hover:backdrop-brightness-80 pl-8 pr-8 pt-1 pb-1;
+    @apply text-white hover:backdrop-brightness-80 pl-8 pr-8 pt-1.5 pb-1.5 w-full;
 }
