@@ -4,10 +4,7 @@
 from flask import Flask, Response, send_from_directory, request
 import sqlite3 as sql
 from dotenv import load_dotenv
-import hashlib
-import os
-import json
-import secrets
+import hashlib, os, json, secrets
 
 load_dotenv()
 
