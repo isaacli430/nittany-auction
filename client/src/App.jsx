@@ -5,6 +5,7 @@ import Login from "./routes/login";
 import Logout from "./routes/logout";
 import Products from './routes/products';
 import Profile from './routes/profile';
+import Register from './routes/register';
 
 import NotFound from './routes/notfound';
 
@@ -13,8 +14,9 @@ const App = () => {
     return (
         <BrowserRouter>
             <Routes>
-                <Route path= "/" element={<Root />} />
+                <Route path="/" element={<Root />} />
                 <Route path="/login" element={<Login />} />
+                <Route path="/register" element={<Register />} />
                 <Route path="/logout" element={<Logout />} />
                 <Route path="/products" element={<Products />} />
                 <Route path="/profile" element={<Profile />} />
