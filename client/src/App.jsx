@@ -8,6 +8,7 @@ import Profile from './routes/profile';
 import Register from './routes/register';
 import CreateListing from './routes/create_listing';
 import ViewListing from './routes/view_listing';
+import PlaceBid from './routes/place_bid';
 
 import NotFound from './routes/notfound';
 
@@ -21,6 +22,7 @@ const App = () => {
                 <Route path="/create-listing" element={<CreateListing />} />
                 <Route path="/register" element={<Register />} />
                 <Route path="/listing/:seller_email/:listing_id" element={<ViewListing />} />
+                <Route path="/bid/:seller_email/:listing_id" element={<PlaceBid />} />
                 <Route path="/logout" element={<Logout />} />
                 <Route path="/products" element={<Products />} />
                 <Route path="/profile" element={<Profile />} />

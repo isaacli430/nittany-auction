@@ -599,6 +599,154 @@ def index(path):
     else:
         return send_from_directory(app.static_folder, 'index.html')
 
+# ================================
+# Place a bid
+# ================================
+
+
+@app.route('/api/bid', methods=['POST'])
+def place_bid():
+    # This route lets a logged in user place a bid on a listing
+    # Before saving anything it checks all the basic auction rules
+    # so bad bids do not get into the database
+    token = request.headers.get('Authorization')
+    data = request.json
+
+    seller_email = data.get('seller_email')
+    listing_id = data.get('listing_id')
+    bid_price = float(data.get('bid_price'))
+
+    conn = sql.connect("database.db")
+    cur = conn.cursor()
+
+    # Use the token to figure out which user is trying to place the bid
+    cur.execute("SELECT email FROM Tokens WHERE token = ?", (token,))
+    user = cur.fetchone()
+
+    # If the token is invalid then the user is not allowed to bid
+    if not user:
+        conn.close()
+        return Response(
+            json.dumps({"error": "Unauthorized"}),
+            status=401,
+            mimetype="application/json"
+        )
+
+    bidder_email = user[0]
+
+    # Getting the listing info so we can check if it exists
+    # and whether it is still open for bidding
+    cur.execute("""
+        SELECT listing_id, status, max_bids
+        FROM Auction_Listing
+        WHERE seller_email = ? AND listing_id = ?
+    """, (seller_email, listing_id))
+    listing = cur.fetchone()
+
+    # If the listing does not exist then stop here
+    if not listing:
+        conn.close()
+        return Response(
+            json.dumps({"error": "Listing not found."}),
+            status=404,
+            mimetype="application/json"
+        )
+
+    # Status 1 means the auction is still active
+    # Any other status means bidding should not be allowed anymore
+    if listing[1] != 1:
+        conn.close()
+        return Response(
+            json.dumps({"error": "This auction is no longer active."}),
+            status=400,
+            mimetype="application/json"
+        )
+
+    # Do not let sellers bid on their own listings
+    if bidder_email == seller_email:
+        conn.close()
+        return Response(
+            json.dumps({"error": "You cannot bid on your own listing."}),
+            status=400,
+            mimetype="application/json"
+        )
+
+    # Count how many bids are already on this listing
+    # If the listing already reached its bid limit then it should be treated as finished
+    cur.execute(
+        "SELECT COUNT(*) FROM Bids WHERE seller_email = ? AND listing_id = ?",
+        (seller_email, listing_id)
+    )
+    bid_count = cur.fetchone()[0]
+
+    if bid_count >= listing[2]:
+        conn.close()
+        return Response(
+            json.dumps({"error": "This auction has already ended."}),
+            status=400,
+            mimetype="application/json"
+        )
+
+    # Find the current highest bid so the new bid has to beat it
+    cur.execute("""
+        SELECT MAX(bid_price) FROM Bids
+        WHERE seller_email = ? AND listing_id = ?
+    """, (seller_email, listing_id))
+    max_bid = cur.fetchone()[0]
+    current_highest = float(max_bid) if max_bid else 0
+
+    # Reject the bid if it is not higher than the current top bid
+    if bid_price <= current_highest:
+        conn.close()
+        return Response(
+            json.dumps(
+                {"error": f"Bid must be higher than ${current_highest:.2f}"}),
+            status=400,
+            mimetype="application/json"
+        )
+
+    # Make the next bid ID by taking the current highest one and adding 1
+    cur.execute("SELECT MAX(bid_id) FROM Bids")
+    max_bid_id = cur.fetchone()[0]
+    bid_id = 1 if max_bid_id is None else max_bid_id + 1
+
+    try:
+        # Insert the new bid into the bids table
+        cur.execute("""
+            INSERT INTO Bids (bid_id, seller_email, listing_id, bidder_email, bid_price)
+            VALUES (?, ?, ?, ?, ?)
+        """, (bid_id, seller_email, listing_id, bidder_email, bid_price))
+
+        # If this bid fills up the max number of allowed bids
+        # then update the listing status so it is marked as finished
+        if bid_count + 1 >= listing[2]:
+            cur.execute("""
+                UPDATE Auction_Listing SET status = 2
+                WHERE seller_email = ? AND listing_id = ?
+            """, (seller_email, listing_id))
+
+        # Save everything if all database steps worked
+        conn.commit()
+
+    except Exception:
+        # If anything fails then undo the changes from this request
+        # so the database does not end up in a half saved state
+        conn.rollback()
+        conn.close()
+        return Response(
+            json.dumps({"error": "Failed to place bid. Please try again."}),
+            status=500,
+            mimetype="application/json"
+        )
+
+    conn.close()
+
+    # If everything worked then send back a success message and the new bid ID
+    return json.dumps({
+        "message": "Bid placed successfully.",
+        "bid_id": bid_id
+    })
+
 
 if __name__ == "__main__":
     app.run(host="127.0.0.1", port="5000")

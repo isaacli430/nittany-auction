@@ -55,6 +55,8 @@ function ViewListing() {
                 setBids(res.data.bids);
                 setUserEmail(res.data.user_email);
                 setHasBid(res.data.has_bid);
+                console.log("user email from bids api:", res.data.user_email);
+
             } catch {
                 // If the bids do not load then just keep the list empty for now
                 setBids([]);
