@@ -177,79 +177,71 @@ def register():
 # ================================
 # Setting page
 # ================================
-
-
 def mask_card(card):
     number = str(card)
     if len(number) >= 4:
         return "****-****-****-" + number[-4:]
     return number
 
-
 def mask_cvv(cvv):
     return "***"
 
-
-@app.route('/api/settings', methods=['GET'])
-# Getting all Setting page information
+@app.route('/api/settings',methods = ['GET'])
+#Getting all Setting page information
 def get_settings():
     token = request.headers.get('Authorization')
     if not token:
-        return Response(json.dumps({"error": "No token"}), status=400)
+        return Response(json.dumps({"error": "No token"}),status = 401)
     connect = sql.connect("database.db")
     cursor = connect.cursor()
-    cursor.execute("SELECT email FROM Tokens WHERE = ?", (token,))
+    cursor.execute("SELECT email FROM Tokens WHERE token = ?", (token,))
     user = cursor.fetchone()
     if not user:
         connect.close()
-        return Response(json.dumps({"error": "Invalid session"}), status=400)
+        return Response(json.dumps({"error": "Invalid session"}),status = 401)
 
     email = user[0]
 
-    # User information
-    cursor.execute("SELECT email FROM Users WHERE email = ?", (email,))
+    #User information
+    cursor.execute("SELECT email FROM Users WHERE email = ?",(email,))
     user_data = cursor.fetchone()
 
-    # Bidder information
-    cursor.execute(
-        "SELECT first_name, last_name, age, major, home_address_id FROM Bidders WHERE email = ?", (email,))
+    #Bidder information
+    cursor.execute("SELECT first_name, last_name, age, major, home_address_id FROM Bidders WHERE email = ?",(email,))
     bidder = cursor.fetchone()
 
-    # Address
+    #Address
     address = None
     if bidder:
-        add_id = bidder[4]
-        cursor.execute(
-            "SELECT street_num, street_name, zipcode FROM Address WHERE address_id = ?", (addr_id,))
+        addr_id = bidder[4]
+        cursor.execute("SELECT street_num, street_name, zipcode FROM Address WHERE address_id = ?",(addr_id,))
         address = cursor.fetchone()
 
-    # Card
-    cursor.execute(
-        "SELECT credit_card_num, card_type, expire_month, expire_year, security_code FROM Credit_Cards WHERE Owner_email = ?", (email,))
-    cards = cursor.fetchall()
+    #Card
+    cursor.execute("SELECT credit_card_num, card_type, expire_month, expire_year, security_code FROM Credit_Cards WHERE Owner_email = ?",(email,))
+    cards =cursor.fetchall()
 
-    # Seller information
-    cursor.execute(
-        "SELECT balance, bank_routing_number, bank_account_number FROM Sellers WHERE email = ?", (email,))
+    #Seller information
+    cursor.execute("SELECT balance, bank_routing_number, bank_account_number FROM Sellers WHERE email = ?",(email,))
     seller = cursor.fetchone()
 
     connect.close()
 
-    # Return
-    return {
-        "email": email,
-        "bidder": {
+    #Return
+    return{
+        "email":email,
+        "bidder":{
             "first_name": bidder[0] if bidder else None,
             "last_name": bidder[1] if bidder else None,
             "age": bidder[2] if bidder else None,
             "major": bidder[3] if bidder else None,
         },
-        "address": {
+        "address":{
             "street_num": address[0] if address else None,
             "street_name": address[1] if address else None,
             "zipcode": address[2] if address else None,
         } if address else None,
-        "credit_card": [
+        "credit_cards":[
             {
                 "number": mask_card(c[0]),
                 "type": c[1],
@@ -259,7 +251,7 @@ def get_settings():
                 "full_number": c[0]
             } for c in cards
         ],
-        "seller": {
+        "seller":{
             "balance": seller[0] if seller else None,
             "bank_routing": seller[1] if seller else None,
             "bank_account": seller[2] if seller else None,
@@ -278,7 +270,7 @@ def add_card():
     cursor.execute("SELECT email FROM Tokens WHERE token = ?", (token,))
     user = cursor.fetchone()
     if not user:
-        return Response(json.dumps({"error": "Unauthorized"}), 400)
+        return Response(json.dumps({"error": "Unauthorized"}), 401)
     email = user[0]
 
     try:
@@ -293,7 +285,7 @@ def add_card():
                 email
             ))
         connect.commit()
-        connect.clone()
+        connect.close()
         return {"message": "Card added successfully"}
     except:
         connect.close()
@@ -311,7 +303,7 @@ def remove_card():
     cursor.execute("SELECT email FROM Tokens WHERE token = ?", (token,))
     user = cursor.fetchone()
     if not user:
-        return Response(json.dumps({"error": "Unauthorized"}), 400)
+        return Response(json.dumps({"error": "Unauthorized"}), 401)
     email = user[0]
 
     cursor.execute(
@@ -330,7 +322,7 @@ def request_password_change():
     cursor.execute("SELECT email FROM Tokens WHERE token = ?", (token,))
     user = cursor.fetchone()
     if not user:
-        return Response(json.dumps({"error": "Unauthorized"}), 400)
+        return Response(json.dumps({"error": "Unauthorized"}), 401)
     email = user[0]
 
     try:
