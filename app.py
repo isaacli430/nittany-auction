@@ -183,7 +183,7 @@ def mask_card(card):
         return "****-****-****-" + number[-4:]
     return number
 
-def mask_cvv(cvv):
+def mask_security_code(security_code):
     return "***"
 
 @app.route('/api/settings',methods = ['GET'])
@@ -247,7 +247,7 @@ def get_settings():
                 "type": c[1],
                 "exp_month": c[2],
                 "exp_year": c[3],
-                "cvv": mask_cvv(c[4]),
+                "security_code": mask_security_code(c[4]),
                 "full_number": c[0]
             } for c in cards
         ],
@@ -281,7 +281,7 @@ def add_card():
                 data['type'],
                 data['exp_month'],
                 data['exp_year'],
-                data['cvv'],
+                data['security_code'],
                 email
             ))
         connect.commit()
