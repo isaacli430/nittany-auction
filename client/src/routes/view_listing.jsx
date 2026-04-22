@@ -145,6 +145,24 @@ function ViewListing() {
                                         </Link>
                                     )}
 
+                                    {/* Add to cart button - only shown to logged in bidders, not the seller */}
+                                    {logged && userEmail !== listing.seller_email && (
+                                        <button
+                                            onClick={() => {
+                                                const token = localStorage.getItem('token');
+                                                axios.post('http://127.0.0.1:5000/api/cart/add', {
+                                                    seller_email: listing.seller_email,
+                                                    listing_id: listing.listing_id
+                                                }, { headers: { Authorization: token } })
+                                                    .then(() => alert("Added to cart!"))
+                                                    .catch((err) => alert(err.response?.data?.error || "Failed to add to cart."));
+                                            }}
+                                            className='block text-center bg-slate-100 hover:brightness-90 py-1 px-4 rounded-sm text-sm cursor-pointer mt-2 border'
+                                        >
+                                            Add to Cart
+                                        </button>
+                                    )}
+
                                     {/* Placeholder button for messaging the seller later */}
                                     {logged && (
                                         <button className='block text-center bg-slate-100 hover:brightness-90 py-1 px-4 rounded-sm text-sm cursor-pointer mt-2 border'>

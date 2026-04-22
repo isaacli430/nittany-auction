@@ -15,6 +15,7 @@ import SellerListing from './routes/seller_listing';
 import Listings from './routes/listings';
 import NotFound from './routes/notfound';
 import ResetPassword from './routes/reset_password';
+import Cart from './routes/cart';
 
 const App = () => {
 
@@ -36,6 +37,7 @@ const App = () => {
                 <Route path="/listings" element={<Listings /> />
                 <Route path="/not-found" element={<NotFound />} />
                 <Route path="/reset-password" element={<ResetPassword />} />
+                <Route path="/cart" element={<Cart />} />
                 <Route path="*" element={<Navigate to="/not-found" />} />
             </Routes>
         </BrowserRouter>

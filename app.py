@@ -1164,6 +1164,202 @@ def reset_password():
     # If everything worked then send back a success message
     return json.dumps({"message": "Password reset successfully."})
 
+# ================================
+# Get cart items
+# ================================
+
+
+@app.route('/api/cart', methods=['GET'])
+def get_cart():
+    # This route gets all cart items for the user who is currently logged in
+    # It also joins with the listing table so the frontend gets item details also
+    token = request.headers.get('Authorization')
+
+    conn = sql.connect("database.db")
+    cur = conn.cursor()
+
+    # Use the token to figure out which user is making this request
+    cur.execute("SELECT email FROM Tokens WHERE token = ?", (token,))
+    user = cur.fetchone()
+
+    # If the token is invalid then do not allow access
+    if not user:
+        conn.close()
+        return Response(
+            json.dumps({"error": "Unauthorized"}),
+            status=401,
+            mimetype="application/json"
+        )
+
+    bidder_email = user[0]
+
+    # Get every item in this users cart along with the related listing info
+    cur.execute("""
+        SELECT 
+            c.cart_id,
+            c.seller_email,
+            c.listing_id,
+            al.auction_title,
+            al.product_name,
+            al.reserve_price,
+            al.status
+        FROM Cart c
+        JOIN Auction_Listing al 
+            ON c.listing_id = al.listing_id AND c.seller_email = al.seller_email
+        WHERE c.bidder_email = ?
+    """, (bidder_email,))
+    rows = cur.fetchall()
+
+    conn.close()
+
+    # Send all the cart items back to the frontend
+    return json.dumps({
+        "items": [{
+            "cart_id": row[0],
+            "seller_email": row[1],
+            "listing_id": row[2],
+            "auction_title": row[3],
+            "product_name": row[4],
+            "reserve_price": row[5],
+            "status": row[6]
+        } for row in rows]
+    })
+
+
+# ================================
+# Add item to cart
+# ================================
+@app.route('/api/cart/add', methods=['POST'])
+def add_to_cart():
+    # This route adds one listing to the logged in users cart
+    # It also blocks duplicates and stops users from adding their own listing
+    token = request.headers.get('Authorization')
+    data = request.json
+
+    seller_email = data.get('seller_email')
+    listing_id = data.get('listing_id')
+
+    conn = sql.connect("database.db")
+    cur = conn.cursor()
+
+    # Use the token to figure out which user is logged in
+    cur.execute("SELECT email FROM Tokens WHERE token = ?", (token,))
+    user = cur.fetchone()
+
+    # If the token is invalid then stop here
+    if not user:
+        conn.close()
+        return Response(
+            json.dumps({"error": "Unauthorized"}),
+            status=401,
+            mimetype="application/json"
+        )
+
+    bidder_email = user[0]
+
+    # Do not let users add their own listing to their cart
+    if bidder_email == seller_email:
+        conn.close()
+        return Response(
+            json.dumps(
+                {"error": "You cannot add your own listing to your cart."}),
+            status=400,
+            mimetype="application/json"
+        )
+
+    # Check if this exact listing is already in the cart
+    cur.execute("""
+        SELECT cart_id FROM Cart 
+        WHERE bidder_email = ? AND seller_email = ? AND listing_id = ?
+    """, (bidder_email, seller_email, listing_id))
+
+    if cur.fetchone():
+        conn.close()
+        return Response(
+            json.dumps({"error": "This item is already in your cart."}),
+            status=400,
+            mimetype="application/json"
+        )
+
+    try:
+        # Insert the new item into the cart table
+        cur.execute("""
+            INSERT INTO Cart (bidder_email, seller_email, listing_id)
+            VALUES (?, ?, ?)
+        """, (bidder_email, seller_email, listing_id))
+        conn.commit()
+
+    except Exception:
+        # If something fails then undo the insert
+        # so the database does not get left in a weird state
+        conn.rollback()
+        conn.close()
+        return Response(
+            json.dumps({"error": "Failed to add to cart."}),
+            status=500,
+            mimetype="application/json"
+        )
+
+    conn.close()
+
+    # Let the frontend know the item was added successfully``
+    return json.dumps({"message": "Item added to cart."})
+
+# ================================
+# Remove item from cart
+# ================================
+
+
+@app.route('/api/cart/remove', methods=['POST'])
+def remove_from_cart():
+    # This route removes one item from the users cart
+    # It only deletes the item if it actually belongs to the logged in user
+    token = request.headers.get('Authorization')
+    data = request.json
+
+    cart_id = data.get('cart_id')
+
+    conn = sql.connect("database.db")
+    cur = conn.cursor()
+
+    # Use the token to figure out who is currently logged in
+    cur.execute("SELECT email FROM Tokens WHERE token = ?", (token,))
+    user = cur.fetchone()
+
+    # If the token is invalid then stop here
+    if not user:
+        conn.close()
+        return Response(
+            json.dumps({"error": "Unauthorized"}),
+            status=401,
+            mimetype="application/json"
+        )
+
+    bidder_email = user[0]
+
+    try:
+        # Only remove the cart item if it belongs to this user
+        cur.execute(
+            "DELETE FROM Cart WHERE cart_id = ? AND bidder_email = ?",
+            (cart_id, bidder_email)
+        )
+        conn.commit()
+
+    except Exception:
+        # If deleting fails then rollthe change back
+        conn.rollback()
+        conn.close()
+        return Response(
+            json.dumps({"error": "Failed to remove item."}),
+            status=500,
+            mimetype="application/json"
+        )
+
+    conn.close()
+
+    # Send back a success message
+    return json.dumps({"message": "Item removed from cart."})
+
 
 if __name__ == "__main__":
     app.run(host="127.0.0.1", port="5000")
