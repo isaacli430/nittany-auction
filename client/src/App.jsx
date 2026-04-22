@@ -9,6 +9,7 @@ import Register from './routes/register';
 import CreateListing from './routes/create_listing';
 import ViewListing from './routes/view_listing';
 import PlaceBid from './routes/place_bid';
+import Category from './route/category';
 
 import NotFound from './routes/notfound';
 
@@ -26,6 +27,7 @@ const App = () => {
                 <Route path="/logout" element={<Logout />} />
                 <Route path="/products" element={<Products />} />
                 <Route path="/profile" element={<Profile />} />
+                <Route path="/categories" element={<Category />} />
 
                 <Route path="/not-found" element={<NotFound />} />
                 <Route path="*" element={<Navigate to="/not-found" />} />
