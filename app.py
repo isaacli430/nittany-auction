@@ -1360,6 +1360,72 @@ def remove_from_cart():
     # Send back a success message
     return json.dumps({"message": "Item removed from cart."})
 
+# ================================
+# submit helpdesk request
+# ================================
+
+
+@app.route('/api/helpdesk/request', methods=['POST'])
+def submit_helpdesk_request():
+    # This route saves a help request from the user into the Requests table
+    # The user has to be logged in so the system knows who sent the request
+    token = request.headers.get('Authorization')
+    data = request.json
+
+    message = data.get('message')
+
+    conn = sql.connect("database.db")
+    cur = conn.cursor()
+
+    # Try to figure out which user sent the request by checking the token
+    sender_email = None
+    if token:
+        cur.execute("SELECT email FROM Tokens WHERE token = ?", (token,))
+        user = cur.fetchone()
+        if user:
+            sender_email = user[0]
+
+    # If no valid logged in user was found then do not allow the request
+    if not sender_email:
+        conn.close()
+        return Response(
+            json.dumps(
+                {"error": "You must be logged in to submit a help request."}),
+            status=401,
+            mimetype="application/json"
+        )
+
+    # Make the next request ID by taking the current max value and adding 1
+    cur.execute("SELECT MAX(request_id) FROM Requests")
+    max_req = cur.fetchone()[0]
+    request_id = 1 if max_req is None else max_req + 1
+
+    try:
+        # Insert the new help request into the database
+        cur.execute("""
+            INSERT INTO Requests 
+            (request_id, sender_email, helpdesk_staff_email, request_type, request_desc, request_status)
+            VALUES (?, ?, 'helpdeskteam@lsu.edu', 'HelpRequest', ?, 0)
+        """, (request_id, sender_email, message))
+        conn.commit()
+
+    except Exception:
+        # If something fails then roll the change back
+        # so nothing gets half saved in the database
+        conn.rollback()
+        conn.close()
+        return Response(
+            json.dumps(
+                {"error": "Failed to submit request. Please try again."}),
+            status=500,
+            mimetype="application/json"
+        )
+
+    conn.close()
+
+    # If everything works then send back a success message
+    return json.dumps({"message": "Help request submitted successfully."})
+
 
 if __name__ == "__main__":
     app.run(host="127.0.0.1", port="5000")
