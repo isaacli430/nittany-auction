@@ -530,6 +530,30 @@ def get_listing(seller_email, listing_id):
         "status":              row[9]
     })
 
+# ================================
+# Get all listings
+# ================================
+@app.route('/api/all-listings')
+def get_all_listings():
+    connect = sql.connect("database.db")
+    cursor = connect.cursor()
+    cursor.execute("""
+        SELECT seller_email, listing_id, category, auction_title, product_name, reserve_price, status
+        FROM Auction_Listing
+        WHERE status = 1    
+    """)
+    rows = cursor.fetchall()
+    connect.close()
+    return json.dumps([{
+        "seller_email": row[0],
+        "listing_id": row[1],
+        "category": row[2],
+        "auction_title": row[3],
+        "product_name": row[4],
+        "reserve_price": row[5],
+        "status": row[6],
+        "promoted": False
+    }for row in rows])
 
 # ================================
 # Get bids for one listing
