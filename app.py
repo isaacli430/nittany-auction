@@ -821,11 +821,17 @@ def get_my_listings():
     """, (seller_email,))
     rows = cur.fetchall()
 
+    # Also fetch the seller's account balance from the Sellers table
+    cur.execute("SELECT balance FROM Sellers WHERE email = ?", (seller_email,))
+    seller = cur.fetchone()
+    balance = seller[0] if seller else 0
+
     conn.close()
 
-    # Send the seller email and all listing info back to the frontend.
+    # Send the seller email, balance, and all listing info back to the frontend
     return json.dumps({
         "seller_email": seller_email,
+        "balance": balance,
         "listings": [{
             "listing_id": row[0],
             "auction_title": row[1],

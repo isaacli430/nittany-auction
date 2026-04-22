@@ -13,6 +13,7 @@ function SellerListings() {
     const [loadDone, setLoadDone] = useState(false);
     const [listings, setListings] = useState([]);
     const [sellerEmail, setSellerEmail] = useState("");
+    const [balance, setBalance] = useState(null);
 
     // This runs when the page first opens
     // It checks if the user is logged in then makes sure they are actually a seller
@@ -55,6 +56,8 @@ function SellerListings() {
 
                 setListings(res.data.listings);
                 setSellerEmail(res.data.seller_email);
+                setBalance(res.data.balance);
+
             } catch {
                 // If something goes wrong then just leave the listings empty instead of crashing the page
                 setListings([]);
@@ -81,6 +84,14 @@ function SellerListings() {
                     <Base title="My Listings" logged={logged} />
 
                     <div className='max-w-3xl mx-auto py-10 px-6'>
+                        {/* Account balance card shown at the top of the seller's listings page */}
+                        <div className='border rounded-sm p-4 bg-white mb-6'>
+                            <p className='text-xs text-slate-400 mb-1'>Account Balance</p>
+                            <p className='text-2xl font-bold text-green-600'>
+                                ${balance !== null ? parseFloat(balance).toFixed(2) : "0.00"}
+                            </p>
+                        </div>
+
                         <div className='flex justify-between items-center mb-6'>
                             <h1 className='text-2xl font-bold'>My Listings</h1>
 
