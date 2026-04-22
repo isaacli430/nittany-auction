@@ -12,6 +12,7 @@ import PlaceBid from './routes/place_bid';
 import Category from './routes/category';
 import SellerListings from './routes/seller_listings';
 import SellerListing from './routes/seller_listing';
+import Listings from './routes/listings';
 import NotFound from './routes/notfound';
 import ResetPassword from './routes/reset_password';
 
@@ -32,6 +33,7 @@ const App = () => {
                 <Route path="/products" element={<Products />} />
                 <Route path="/profile" element={<Profile />} />
                 <Route path="/categories" element={<Category />} />
+                <Route path="/listings" element={<Listings /> />
                 <Route path="/not-found" element={<NotFound />} />
                 <Route path="/reset-password" element={<ResetPassword />} />
                 <Route path="*" element={<Navigate to="/not-found" />} />
