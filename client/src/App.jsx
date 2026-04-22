@@ -9,8 +9,10 @@ import Register from './routes/register';
 import CreateListing from './routes/create_listing';
 import ViewListing from './routes/view_listing';
 import PlaceBid from './routes/place_bid';
-import Category from './route/category';
+import Category from './routes/category';
 import Listings from './routes/listings';
+import SellerListings from './routes/seller_listings';
+import SellerListing from './routes/seller_listing';
 import NotFound from './routes/notfound';
 
 const App = () => {
@@ -24,6 +26,8 @@ const App = () => {
                 <Route path="/register" element={<Register />} />
                 <Route path="/listing/:seller_email/:listing_id" element={<ViewListing />} />
                 <Route path="/bid/:seller_email/:listing_id" element={<PlaceBid />} />
+                <Route path="/my-listings" element={<SellerListings />} />
+                <Route path="/seller-listing/:listing_id" element={<SellerListing />} />
                 <Route path="/logout" element={<Logout />} />
                 <Route path="/products" element={<Products />} />
                 <Route path="/profile" element={<Profile />} />

@@ -763,6 +763,330 @@ def place_bid():
         "bid_id": bid_id
     })
 
+# ================================
+# Getting all listings for seller
+# ================================
+
+
+@app.route('/api/my-listings', methods=['GET'])
+def get_my_listings():
+    # This route gets all listings that belong to the seller who is currently logged in
+    # It also sends back the number of bids on each listing so the frontend can show activity
+    token = request.headers.get('Authorization')
+
+    conn = sql.connect("database.db")
+    cur = conn.cursor()
+
+    # Use the token to figure out which seller is making this request
+    cur.execute("SELECT email FROM Tokens WHERE token = ?", (token,))
+    user = cur.fetchone()
+
+    # If the token is invalid then do not let them access seller data
+    if not user:
+        conn.close()
+        return Response(
+            json.dumps({"error": "Unauthorized"}),
+            status=401,
+            mimetype="application/json"
+        )
+
+    seller_email = user[0]
+
+    # Get all listings that belong to this seller
+    # The LEFT JOIN lets us count bids too even if a listing has zero bids
+    cur.execute("""
+        SELECT 
+            al.listing_id,
+            al.auction_title,
+            al.category,
+            al.status,
+            COUNT(b.bid_id) AS bid_count
+        FROM Auction_Listing al
+        LEFT JOIN Bids b ON al.listing_id = b.listing_id AND b.seller_email = al.seller_email
+        WHERE al.seller_email = ?
+        GROUP BY al.listing_id
+        ORDER BY al.listing_id DESC
+    """, (seller_email,))
+    rows = cur.fetchall()
+
+    conn.close()
+
+    # Send the seller email and all listing info back to the frontend.
+    return json.dumps({
+        "seller_email": seller_email,
+        "listings": [{
+            "listing_id": row[0],
+            "auction_title": row[1],
+            "category": row[2],
+            "status": row[3],
+            "bid_count": row[4]
+        } for row in rows]
+    })
+
+
+# ================================
+# Get one listing for the seller
+# ================================
+@app.route('/api/my-listing/<int:listing_id>', methods=['GET'])
+def get_my_listing(listing_id):
+    # This route gets one specific listing that belongs to the logged in seller
+    # It also sends back the bid history for that listing
+    token = request.headers.get('Authorization')
+
+    conn = sql.connect("database.db")
+    cur = conn.cursor()
+
+    # Use the token to find out which seller is logged in
+    cur.execute("SELECT email FROM Tokens WHERE token = ?", (token,))
+    user = cur.fetchone()
+
+    # Stop right here if the user is not authorized
+    if not user:
+        conn.close()
+        return Response(
+            json.dumps({"error": "Unauthorized"}),
+            status=401,
+            mimetype="application/json"
+        )
+
+    seller_email = user[0]
+
+    # Only get the listing if it actually belongs to this seller
+    cur.execute("""
+        SELECT listing_id, seller_email, category, auction_title,
+               product_name, product_description, quantity,
+               reserve_price, max_bids, status
+        FROM Auction_Listing
+        WHERE seller_email = ? AND listing_id = ?
+    """, (seller_email, listing_id))
+    row = cur.fetchone()
+
+    # If no listing matches then return a error
+    if not row:
+        conn.close()
+        return Response(
+            json.dumps({"error": "Listing not found"}),
+            status=404,
+            mimetype="application/json"
+        )
+
+    # Also load the bids for this listing so the seller can see the bid history
+    cur.execute("""
+        SELECT bid_id, bidder_email, bid_price
+        FROM Bids
+        WHERE seller_email = ? AND listing_id = ?
+        ORDER BY bid_price DESC
+    """, (seller_email, listing_id))
+    bids = cur.fetchall()
+
+    conn.close()
+
+    # Send back both the listing details and the bid history
+    return json.dumps({
+        "seller_email": seller_email,
+        "listing": {
+            "listing_id": row[0],
+            "seller_email": row[1],
+            "category": row[2],
+            "auction_title": row[3],
+            "product_name": row[4],
+            "product_description": row[5],
+            "quantity": row[6],
+            "reserve_price": row[7],
+            "max_bids": row[8],
+            "status": row[9]
+        },
+        "bids": [{"bid_id": b[0], "bidder_email": b[1], "bid_price": b[2]} for b in bids]
+    })
+
+
+# ================================
+# Edit a seller listing
+# ================================
+@app.route('/api/my-listing/<int:listing_id>/edit', methods=['POST'])
+def edit_my_listing(listing_id):
+    # This route updates the editable parts of one listing
+    # Things like the seller email and listing ID stay the same
+    token = request.headers.get('Authorization')
+    data = request.json
+
+    conn = sql.connect("database.db")
+    cur = conn.cursor()
+
+    # Use the token to figure out which seller is trying to edit the listing
+    cur.execute("SELECT email FROM Tokens WHERE token = ?", (token,))
+    user = cur.fetchone()
+
+    # If the token is bad then do not allow the update
+    if not user:
+        conn.close()
+        return Response(
+            json.dumps({"error": "Unauthorized"}),
+            status=401,
+            mimetype="application/json"
+        )
+
+    seller_email = user[0]
+
+    # Make sure the listing actually belongs to the logged in seller
+    cur.execute(
+        "SELECT listing_id FROM Auction_Listing WHERE seller_email = ? AND listing_id = ?",
+        (seller_email, listing_id)
+    )
+
+    if not cur.fetchone():
+        conn.close()
+        return Response(
+            json.dumps({"error": "Listing not found"}),
+            status=404,
+            mimetype="application/json"
+        )
+
+    try:
+        # Update the listing with the new values sent from the frontend
+        cur.execute("""
+            UPDATE Auction_Listing
+            SET category = ?, auction_title = ?, product_name = ?,
+                product_description = ?, quantity = ?, reserve_price = ?, max_bids = ?
+            WHERE seller_email = ? AND listing_id = ?
+        """, (
+            data.get('category'),
+            data.get('auction_title'),
+            data.get('product_name'),
+            data.get('product_description'),
+            data.get('quantity'),
+            data.get('reserve_price'),
+            data.get('max_bids'),
+            seller_email,
+            listing_id
+        ))
+        conn.commit()
+
+    except Exception:
+        # If something fails then undo the update
+        # so the database does not end up halfchanged
+        conn.rollback()
+        conn.close()
+        return Response(
+            json.dumps({"error": "Failed to update listing."}),
+            status=500,
+            mimetype="application/json"
+        )
+
+    conn.close()
+
+    # Let the frontend know the update worked
+    return json.dumps({"message": "Listing updated successfully."})
+
+
+# ================================
+# Unlist a listing
+# ================================
+@app.route('/api/my-listing/<int:listing_id>/unlist', methods=['POST'])
+def unlist_my_listing(listing_id):
+    # This route makes a listing inactive
+    # Inactive listings should no longer be available for bidders to interact with
+    token = request.headers.get('Authorization')
+
+    conn = sql.connect("database.db")
+    cur = conn.cursor()
+
+    # Use the token to find the sellers email
+    cur.execute("SELECT email FROM Tokens WHERE token = ?", (token,))
+    user = cur.fetchone()
+
+    # If the user is not properly logged in then stop here
+    if not user:
+        conn.close()
+        return Response(
+            json.dumps({"error": "Unauthorized"}),
+            status=401,
+            mimetype="application/json"
+        )
+
+    seller_email = user[0]
+
+    try:
+        # Set the listing status to 0 which means inactive.
+        cur.execute("""
+            UPDATE Auction_Listing SET status = 0
+            WHERE seller_email = ? AND listing_id = ?
+        """, (seller_email, listing_id))
+        conn.commit()
+
+    except Exception:
+        # If something goes wrong then undo the change.
+        conn.rollback()
+        conn.close()
+        return Response(
+            json.dumps({"error": "Failed to unlist."}),
+            status=500,
+            mimetype="application/json"
+        )
+
+    conn.close()
+
+    # Send a success message back to the frontend
+    return json.dumps({"message": "Listing unlisted."})
+
+
+# ================================
+# Delete a listing
+# ================================
+@app.route('/api/my-listing/<int:listing_id>/delete', methods=['POST'])
+def delete_my_listing(listing_id):
+    # This route permanently deletes a listing
+    # It deletes the bids tied to that listing first so there are no database issues
+    token = request.headers.get('Authorization')
+
+    conn = sql.connect("database.db")
+    cur = conn.cursor()
+
+    # Use the token to figure out which seller is making the delete request
+    cur.execute("SELECT email FROM Tokens WHERE token = ?", (token,))
+    user = cur.fetchone()
+
+    # If the token is invalid then do not allow the delete
+    if not user:
+        conn.close()
+        return Response(
+            json.dumps({"error": "Unauthorized"}),
+            status=401,
+            mimetype="application/json"
+        )
+
+    seller_email = user[0]
+
+    try:
+        # Delete the bids first so there are no foreign key problems
+        cur.execute(
+            "DELETE FROM Bids WHERE seller_email = ? AND listing_id = ?",
+            (seller_email, listing_id)
+        )
+
+        # Then delete the actual listing itself
+        cur.execute(
+            "DELETE FROM Auction_Listing WHERE seller_email = ? AND listing_id = ?",
+            (seller_email, listing_id)
+        )
+        conn.commit()
+
+    except Exception:
+        # If anything breaks then roll everything back
+        # so nothing gets deleted halfway
+        conn.rollback()
+        conn.close()
+        return Response(
+            json.dumps({"error": "Failed to delete listing."}),
+            status=500,
+            mimetype="application/json"
+        )
+
+    conn.close()
+
+    # Tell the frontend the delete worked.
+    return json.dumps({"message": "Listing deleted."})
+
 
 if __name__ == "__main__":
     app.run(host="127.0.0.1", port="5000")
