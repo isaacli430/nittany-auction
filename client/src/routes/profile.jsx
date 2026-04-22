@@ -120,6 +120,12 @@ function Profile() {
                                             </div>
                                         </>
                                     ):<></>}
+                                    {userData.rating ? (
+                                        <div className="grid grid-cols-2 p-2 border-b border-gray-300">
+                                            <p className="text-slate-500">Rating</p>
+                                            <p>{userData.rating} / 5</p>
+                                        </div>
+                                    ):<></>}
                                 </div>
                                 
 

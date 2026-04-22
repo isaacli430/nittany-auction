@@ -10,6 +10,7 @@ import hashlib
 import os
 import json
 import secrets
+import statistics
 
 load_dotenv()
 
@@ -233,6 +234,20 @@ def get_settings():
         "SELECT balance, bank_routing_number, bank_account_number FROM Sellers WHERE email = ?", (email,))
     seller = cursor.fetchone()
 
+    cursor.execute(
+        "SELECT rating FROM Ratings where seller_email = ?", (email,)
+    )
+
+    ratings = cursor.fetchall()
+
+    ratings = [x[0] for x in ratings]
+
+    if len(ratings) > 0:
+        rating = statistics.mean(ratings)
+
+    else:
+        rating = None
+
     connect.close()
 
     # Return
@@ -263,7 +278,8 @@ def get_settings():
             "balance": seller[0] if seller else None,
             "bank_routing": seller[1] if seller else None,
             "bank_account": seller[2] if seller else None,
-        } if seller else None
+        } if seller else None,
+        "rating": rating 
     }
 
 
