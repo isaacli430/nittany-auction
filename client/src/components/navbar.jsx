@@ -27,7 +27,7 @@ const Navbar = ({ logged }) => {
                 <Link className='nav-link' to="/">Nittany Auction</Link>
 
                 {/* Main browse page link */}
-                <Link className='nav-link' to="/products">Browse</Link>
+                <Link className='nav-link' to="/listings">Browse</Link>
 
                 {/* These links only show up if the user is logged in */}
                 {logged && (
