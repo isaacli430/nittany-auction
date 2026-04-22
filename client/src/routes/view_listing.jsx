@@ -163,12 +163,7 @@ function ViewListing() {
                                         </button>
                                     )}
 
-                                    {/* Placeholder button for messaging the seller later */}
-                                    {logged && (
-                                        <button className='block text-center bg-slate-100 hover:brightness-90 py-1 px-4 rounded-sm text-sm cursor-pointer mt-2 border'>
-                                            Message Seller
-                                        </button>
-                                    )}
+
                                 </div>
 
                                 {/* Bid history section */}

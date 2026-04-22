@@ -68,7 +68,7 @@ function Cart() {
     // so the user can see the final total at the bottom.
     const getTotal = () => {
         return cartItems.reduce((sum, item) => {
-            const price = parseFloat(item.reserve_price) || 0;
+            const price = parseFloat(item.current_bid || 0);
             return sum + price;
         }, 0).toFixed(2);
     };
@@ -122,7 +122,7 @@ function Cart() {
                                             <div className='text-right flex flex-col items-end gap-2'>
                                                 {/* Price for this cart item */}
                                                 <p className='font-semibold text-green-600'>
-                                                    ${parseFloat(item.reserve_price).toFixed(2)}
+                                                    ${parseFloat(item.current_bid || 0).toFixed(2)}
                                                 </p>
 
                                                 {/* Button to remove this item from the cart */}

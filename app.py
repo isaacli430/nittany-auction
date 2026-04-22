@@ -1201,12 +1201,15 @@ def get_cart():
             c.listing_id,
             al.auction_title,
             al.product_name,
-            al.reserve_price,
+            COALESCE(MAX(b.bid_price), 0) AS current_bid,
             al.status
         FROM Cart c
         JOIN Auction_Listing al 
             ON c.listing_id = al.listing_id AND c.seller_email = al.seller_email
+        LEFT JOIN Bids b 
+            ON b.listing_id = c.listing_id AND b.seller_email = c.seller_email
         WHERE c.bidder_email = ?
+        GROUP BY c.cart_id
     """, (bidder_email,))
     rows = cur.fetchall()
 
@@ -1220,7 +1223,7 @@ def get_cart():
             "listing_id": row[2],
             "auction_title": row[3],
             "product_name": row[4],
-            "reserve_price": row[5],
+            "current_bid": row[5],
             "status": row[6]
         } for row in rows]
     })
@@ -1425,6 +1428,50 @@ def submit_helpdesk_request():
 
     # If everything works then send back a success message
     return json.dumps({"message": "Help request submitted successfully."})
+
+# ================================
+# Get homepage listings
+# ================================
+
+
+@app.route('/api/listings', methods=['GET'])
+def get_listings():
+    # This route gets a small set of active listings for the home page
+    # It also includes the current highest bid for each listing if one exists
+    conn = sql.connect("database.db")
+    cur = conn.cursor()
+
+    # Get active listings from the auction table
+    # Join with the bids table so the frontend can also show the current highest bid
+    cur.execute("""
+        SELECT
+            al.listing_id,
+            al.seller_email,
+            al.category,
+            al.auction_title,
+            al.product_name,
+            al.reserve_price,
+            MAX(b.bid_price) AS current_bid
+        FROM Auction_Listing al
+        LEFT JOIN Bids b ON al.listing_id = b.listing_id AND b.seller_email = al.seller_email
+        WHERE al.status = 1
+        GROUP BY al.listing_id
+        ORDER BY al.listing_id DESC
+        LIMIT 6
+    """)
+    rows = cur.fetchall()
+    conn.close()
+
+    # Send the listing data back to the frontend
+    return json.dumps([{
+        "listing_id": row[0],
+        "seller_email": row[1],
+        "category": row[2],
+        "auction_title": row[3],
+        "product_name": row[4],
+        "reserve_price": row[5],
+        "current_bid": row[6]
+    } for row in rows])
 
 
 if __name__ == "__main__":
