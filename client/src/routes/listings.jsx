@@ -1,6 +1,7 @@
 import { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import Base from '../components/base';
+import validate from "../components/validate";
 
 function Listings(){
     const [listings, setListings] = useState([]);
@@ -8,6 +9,14 @@ function Listings(){
     const [search, setSearch] = useState('');
     const [selectedCategory, setSelectedCategory] = useState('');
     const navigate = useNavigate();
+
+    const [logged, setLogged] = useState(false);
+
+    useEffect(() => {
+        validate().then((resp) => {
+            setLogged(resp);
+        })
+    });
 
     useEffect(() => {
         async function loadData(){
@@ -37,7 +46,7 @@ function Listings(){
 
     return (
         <>
-            <Base title = "Browse Listings" logged={true} />
+            <Base title = "Browse Listings" logged={logged} />
             <h1>Browse Listings</h1>
 
             <div>
