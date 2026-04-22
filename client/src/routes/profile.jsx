@@ -52,7 +52,6 @@ function Profile() {
         await axios.post('/api/add-card', newCard, {
             headers: { Authorization: token }
         });
-        alert('Card added successfully.');
         window.location.reload();
     };
 
@@ -81,36 +80,48 @@ function Profile() {
             {loadDone && (
                 <>
                     <Base title="Profile" logged={logged} />
-                    <h1>Profile</h1>
                     <div>
                         {userData ? (
-                            <div>
+                            <div className="grid grid-cols-2 mt-5 ml-5">
                                 {/*Profile*/}
-                                <div>
-                                    <h3>Personal profile</h3>
-                                    <p>Email: {userData.email}</p>
-                                    <p>First Name: {userData.bidder?.first_name}</p>
-                                    <p>Last Name: {userData.bidder?.last_name}</p>
-                                    <p>Age: {userData.bidder?.age}</p>
-                                    <p>Major: {userData.bidder?.major}</p>
-                                </div>
-
-                                <br/>
-
-                                {/*address*/}
-                                <div>
-                                    <h3>Address</h3>
+                                <div className="flex flex-col rounded-sm border border-gray-300 m-5">
+                                    <div className="grid grid-cols-2 p-2 border-b border-gray-300">
+                                        <p><b>Personal Details</b></p>
+                                    </div>
+                                    <div className="grid grid-cols-2 p-2 border-b border-gray-300">
+                                        <p className="text-slate-500">Email</p>
+                                        <p>{userData.email}</p>
+                                    </div>
+                                    <div className="grid grid-cols-2 p-2 border-b border-gray-300">
+                                        <p className="text-slate-500">First Name</p>
+                                        <p>{userData.bidder?.first_name}</p>
+                                    </div>
+                                    <div className="grid grid-cols-2 p-2 border-b border-gray-300">
+                                        <p className="text-slate-500">Last Name</p>
+                                        <p>{userData.bidder?.last_name}</p>
+                                    </div>
+                                    <div className="grid grid-cols-2 p-2 border-b border-gray-300">
+                                        <p className="text-slate-500">Age</p>
+                                        <p>{userData.bidder?.age}</p>
+                                    </div>
+                                    <div className="grid grid-cols-2 p-2 border-b border-gray-300">
+                                        <p className="text-slate-500">Major</p>
+                                        <p>{userData.bidder?.major}</p>
+                                    </div>
                                     {userData.address ? (
-                                        <div>
-                                            <p>Street: {userData.address.street_num} {userData.address.street_name}</p>
-                                            <p>Zipcode: {userData.address.zipcode}</p>
-                                        </div>
-                                    ) : (
-                                        <p>No address</p>
-                                    )}
+                                        <>
+                                            <div className="grid grid-cols-2 p-2 border-b border-gray-300">
+                                                <p className="text-slate-500">Street</p>
+                                                <p>{userData.address.street_num} {userData.address.street_name}</p>
+                                            </div>
+                                            <div className="grid grid-cols-2 p-2 border-b border-gray-300">
+                                                <p className="text-slate-500">Zipcode</p>
+                                                <p>{userData.address.zipcode}</p>
+                                            </div>
+                                        </>
+                                    ):<></>}
                                 </div>
-
-                                <br/>
+                                
 
                                 {/*card*/}
                                 <div>
@@ -125,12 +136,10 @@ function Profile() {
                                     ))}
                                 </div>
 
-                                <br/>
-
                                 {/*add card*/}
-                                <div>
+                                <div className="flex flex-col rounded-sm border border-gray-300 m-5">
                                     <h3>Add New Card</h3>
-                                    <from onSubmit = {addCard}>
+                                    <form onSubmit = {addCard} className="flex flex-col" noValidate>
                                         <input placeholder="Card Number" value = {newCard.number} onChange={(e) => setNewCard({...newCard, number: e.target.value })}required /><br />
                                         <select value={newCard.type} onChange={(e) => setNewCard({...newCard, type: e.target.value })}>
                                             <option>Master</option>
@@ -144,10 +153,8 @@ function Profile() {
 
                                         <input placeholder='CVV' value={newCard.security_code} onChange={(e) => setNewCard({...newCard,security_code: e.target.value})} required /><br />
                                         <button type="submit">Add Card</button>
-                                    </from>
+                                    </form>
                                 </div>
-
-                                <br/>
 
                                 {/*request password change*/}
                                 <div>
