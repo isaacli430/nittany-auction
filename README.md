@@ -41,6 +41,33 @@ The login page has fields for inputting `email` (not hidden) and `password` (hid
 
 The logout page redirects the user upon accessing. If the user is logged in, then the user is logged out and redirected back to an updated homepage. Otherwise, the user is redirected to the login page.
 
+## User Registration
+New users can register for an account via the `register` page. The registration form collects basic info used for the database that will later be displayed in the user profile.
+
+## Password Reset
+Users can reset their password using the `reset-password` page, by entering their email and new password. Users must confirm before submiting the reset request.
+
+## Browse Listings
+The `listings` page allows users to look for listings of interest using category filters, as well as searching by name or title.
+
+## Auction Listing
+Auction Listings can be viewed on the `listing`, showing item details, current bid, bid history, and the option to add an item to the cart. Users who have previously bid on a listing are allowed to leave a rating on the seller.
+
+## Placing Bids
+Logged-in users who are not the seller can place a bid on an active listing through a form on the `bid` page. The form automatically starts from the minimum valid bid that is greater than the previous highest bid.
+
+## Seller Dashboard
+Sellers can view and manage their listings at the `my-listings` page, including the status of the listing (active, sold, inactive) and bid count. The account balance is also displayed at the top of the page.
+
+## Create Listings
+Sellers can create a new auction at the `create-listing` page by filling in the title, product name, description, category, quantity, reserve price, and max bids. Listings are submitted for admin approval before being displayed to bidders.
+
+## Shopping cart
+Logged-in users can save listings to a cart, viewable on the `cart` page. Items can be removed one by one and the total cost of all purchases is listed at the bottom.
+
+## User Profile
+Users can view their personal details, manage saved credit cards, request a password change, etc in the `profile` page.
+
 ## Code Directory
 
 └── nittany-auction\
