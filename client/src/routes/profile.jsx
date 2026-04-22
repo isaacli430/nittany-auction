@@ -161,14 +161,6 @@ function Profile() {
                                         <button type="submit">Add Card</button>
                                     </form>
                                 </div>
-
-                                {/*request password change*/}
-                                <div>
-                                    <h3>Password Change</h3>
-                                    <button onClick={requestPasswordChange}>
-                                        Request Password Change
-                                    </button>
-                                </div>
                             </div>
                         ) : (
                             <p>Loading settings...</p>

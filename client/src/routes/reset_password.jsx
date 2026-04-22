@@ -1,7 +1,8 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { useNavigate, Link } from 'react-router-dom';
 import { useForm } from 'react-hook-form';
 import axios from 'axios';
+import validate from "../components/validate";
 import Base from '../components/base';
 
 // This page lets a user reset their password.
@@ -12,6 +13,14 @@ function ResetPassword() {
 
     const [submitError, setSubmitError] = useState("");
     const [submitSuccess, setSubmitSuccess] = useState(false);
+
+    const [logged, setLogged] = useState(false);
+
+    useEffect(() => {
+        validate().then((resp) => {
+            setLogged(resp);
+        })
+    });
 
     // Watch the new password field so we can compare it with the confirm password box.
     const newPassword = watch("new_password");
@@ -48,7 +57,7 @@ function ResetPassword() {
 
     return (
         <>
-            <Base title="Reset Password" logged={false} />
+            <Base title="Reset Password" logged={logged} />
 
             <div className='flex justify-center items-center py-10'>
                 <div className='flex flex-col shadow-lg bg-white rounded-sm p-10 w-full max-w-md'>
